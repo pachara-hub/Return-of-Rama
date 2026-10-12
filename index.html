@@ -28,6 +28,54 @@
 @media(max-width:950px){.sideSig{display:none}.titleCenter{top:14%}.heroActions{top:53%}.chapterLayout{grid-template-columns:minmax(190px,.75fr) minmax(0,1.35fr)}.cardsGrid{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(3,minmax(0,1fr))}.chapterInfo h2{font-size:30px}.heroLayout{grid-template-columns:1fr}.heroPreview{display:none}.heroCards{grid-template-columns:repeat(5,minmax(0,1fr))}.heroCard .avatar{height:130px}.heroExplain{margin-top:15px}.hudCenter{min-width:150px}.hudStat{min-width:60px;padding:7px}.hudHero{min-width:170px}.hudStats .hudStat:last-child{display:none}}
 @media(max-width:620px){#home{padding:16px}.titleCenter{top:12%;width:86vw}.titleMain{font-size:clamp(30px,8vw,48px)}.titleSub{font-size:9px;letter-spacing:.25em}.heroActions{top:auto;bottom:22%;width:68vw}.heroActions .goldbtn{padding:12px;font-size:12px}.heroActions .secondary button{padding:8px;font-size:10px}.homeFoot{font-size:8px;align-items:start}.homeFoot .chapterMini{display:none}.sideSig{display:none}#chapters{padding:12px}.screenHeading{margin-bottom:8px}.chapterLayout{height:calc(100% - 53px);grid-template-columns:1fr;grid-template-rows:minmax(130px,.76fr) minmax(0,1.5fr);gap:8px}.chapterInfo{padding:12px 15px;display:grid;grid-template-columns:1fr auto;gap:2px}.chapterInfo h2{font-size:23px;margin:4px 0}.chapterInfo p{font-size:10px;line-height:1.35;margin:1px 0}.chapterInfo .statline{display:none}.chapterInfo .chapterActions{margin:0;grid-column:2;grid-row:1 / span 4;display:flex;flex-direction:column;justify-content:center}.chapterActions button{padding:10px 8px;font-size:10px;min-width:98px}.chapterInfo .num{font-size:9px}.chapterInfo .thai{font-size:13px}.cardsGrid{gap:7px;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr))}.chapterCard{min-height:0}.cIndex{left:7px;top:7px;font-size:8px}.cName{left:7px;bottom:34px;font-size:9px}.cSub{left:7px;bottom:19px;font-size:8px}.stars{left:7px;bottom:5px;font-size:8px}.lockTag{right:5px;top:5px;font-size:8px}.heroLayout{height:calc(100% - 52px)}.heroCards{grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:6px;margin-top:8px;min-height:0}.heroCard{padding:6px 4px}.heroCard .avatar{height:clamp(55px,11vh,90px);margin:-1px -1px 4px}.heroCard h3{font-size:10px}.heroCard .bio{font-size:8px}.heroCard .ht{font-size:8px}.heroExplain{padding:10px 12px;gap:8px}.heroExplain h2{font-size:16px}.heroExplain p{font-size:10px}.hudTop{top:7px;left:7px;right:7px;gap:5px;flex-wrap:wrap}.hudHero{min-width:0;flex:1;padding:5px 7px;gap:6px}.heroOrb{width:34px;height:34px}.hudHeroName{font-size:10px}.bar{width:clamp(70px,22vw,115px);height:6px}.hudCenter{order:3;flex:1;min-width:0;padding:6px 9px}.hudCenter strong{font-size:9px}.hudCenter small{font-size:8px}.hudStats{gap:4px}.hudStat{min-width:45px;padding:5px}.hudStat span{font-size:13px}.hudStat small{font-size:7px}.hudTop .iconbtn{width:34px;height:34px}.battleBottom{bottom:8px;left:8px;right:8px;align-items:end}.battleHint{display:none}.skills{gap:5px}.skill{width:53px;height:62px}.skill .sIcon{font-size:19px}.skill b{font-size:7px}.skill small{font-size:7px}.mobilePad{display:grid;bottom:83px;left:8px;grid-template-columns:repeat(3,34px);grid-template-rows:repeat(3,34px)}.mobileActions{display:flex;bottom:83px;right:8px}.worldBanner{top:94px;font-size:8px;max-width:80vw;white-space:nowrap}.bossbar{top:120px;width:75vw}.waveAlert{top:35%}.levelChoices{grid-template-columns:1fr}.upgrade{min-height:0;display:grid;grid-template-columns:34px 1fr;column-gap:8px;padding:9px}.upgrade .upIcon{grid-row:span 2}.upgrade b{margin:0}.upgrade small{font-size:10px}.modal{padding:18px}.settingRow{font-size:12px}.settingRow input{width:100px}}
 @media(hover:none) and (pointer:coarse){.mobilePad,.mobileActions{display:grid}}
+.heroPortrait{position:absolute;z-index:1;right:2%;bottom:2%;height:65%;max-width:48%;object-fit:contain;object-position:center bottom;filter:drop-shadow(0 14px 24px #000b) saturate(1.08);mask-image:linear-gradient(#000 0%,#000 78%,transparent 100%)}
+.heroPreview:before{opacity:.2;mix-blend-mode:screen}
+.heroPreview .previewText{top:28px;left:26px;right:auto;width:45%;text-align:left}
+.heroPreview .previewText h2{font-size:clamp(22px,2.6vw,36px)}
+.heroPreview .previewText p{max-width:22ch;line-height:1.5;color:#dfd4ba}
+@media(max-width:950px){.heroPortrait{height:65%;max-width:52%}}
+</style>
+<style>
+:root{--ink:#f5f0e4;--muted:#bdc6ca;--gold:#e7c27a;--gold2:#a87338;--red:#8e2e33;--blue:#76c6d2;--panel:rgba(11,22,30,.82);--line:rgba(227,194,122,.55);--shadow:0 24px 68px #0009}
+#backdrop{filter:saturate(1.08) contrast(1.03) brightness(1.15)}
+#backdrop:before{background:radial-gradient(ellipse at 20% 38%,#78c8de24 0%,transparent 43%),radial-gradient(ellipse at 78% 53%,#f0a44b20 0%,transparent 39%),linear-gradient(180deg,#0920331c,transparent 58%);mix-blend-mode:screen}
+#backdrop:after{background:linear-gradient(90deg,#06101fb5 0%,#06101f30 34%,#06101f20 67%,#06101f7a 100%),linear-gradient(0deg,#07111fc2 0%,#07111f22 33%,#07111f42 100%)}
+#glow{background:radial-gradient(ellipse at 48% 45%,#e7b86618 0%,transparent 47%),radial-gradient(ellipse at 78% 70%,#4388a012 0%,transparent 34%)}
+.seal{background:linear-gradient(145deg,#112b3a99,#07131acc);border-color:#e3c27a;box-shadow:inset 0 0 0 3px #e9d39a12,0 5px 18px #0006}
+.brandWord,.eyebrow,.homeFoot,.sideSig{ text-shadow:0 2px 12px #000b }
+.titleCenter:before{inset:-40px -95px;background:radial-gradient(ellipse,#071321d9 0%,#07132180 38%,transparent 72%);filter:blur(2px)}
+.titleMain{background:linear-gradient(180deg,#fff0c4 0%,#f3d18b 48%,#bd8141 100%);color:transparent;-webkit-background-clip:text;background-clip:text;text-shadow:0 0 28px #f4bc5982,0 5px 22px #000c;filter:drop-shadow(0 2px 0 #29180f)}
+.frame{border-color:#d7b977a8;background:linear-gradient(145deg,#192f3de8,#091621ed 72%);box-shadow:inset 0 0 0 1px #fff1, inset 0 0 0 4px #f9daa608,0 16px 38px #0007;backdrop-filter:blur(12px)}
+.goldbtn{background:linear-gradient(180deg,#fff0bc 0%,#e3b85f 45%,#9d6330 100%);border-color:#ffebb3;box-shadow:inset 0 1px 0 #fff8,0 4px 0 #492c17,0 10px 28px #bd843847}
+.goldbtn:hover{filter:brightness(1.13) saturate(1.08);box-shadow:inset 0 1px 0 #fff9,0 4px 0 #492c17,0 12px 34px #d99a4d70}
+.ghostbtn{background:linear-gradient(180deg,#102536e8,#07131fe8);border-color:#dfc28388;color:#f0e4c8;box-shadow:inset 0 1px 0 #fff1,0 8px 20px #0004;backdrop-filter:blur(9px)}
+.ghostbtn:hover,.iconbtn:hover{background:linear-gradient(180deg,#214152f2,#0c1b28f2);border-color:#f1d28d}
+.iconbtn{background:linear-gradient(145deg,#152d3bcf,#081520ec);border-color:#e0c17d9c;box-shadow:0 5px 18px #0006}
+#heroes{background:linear-gradient(90deg,#071522bd,#0817259c 58%,#071522b0)}
+.heroCard{border-radius:7px;background:linear-gradient(180deg,#132a39ef,#08131feF);border-color:#d8bd8278;box-shadow:inset 0 0 0 1px #fff1,0 10px 28px #0005}
+.heroCard .avatar{height:clamp(110px,19vh,210px);margin:-2px -2px 8px;background:#101d26;box-shadow:inset 0 -26px 34px #07111d88}
+.heroCard .avatar:before{display:none}
+.heroCard .avatar img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 23%;filter:saturate(1.07) contrast(1.04);transition:transform .55s cubic-bezier(.2,.7,.2,1),filter .3s}
+.heroCard .avatar:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,#07152205 42%,#07152244 72%,#071522df 100%);box-shadow:inset 0 0 28px #06101d55}
+.heroCard:hover .avatar img,.heroCard.selected .avatar img{transform:scale(1.045);filter:saturate(1.12) contrast(1.06)}
+.heroCard.selected{border:2px solid #f1cf82;box-shadow:0 0 0 1px #ffe4a33d,0 0 30px #f2b84a45,0 14px 28px #0006}
+.heroCard h3{color:#fff0c8;text-shadow:0 2px 8px #000}
+.heroCard .ht{color:#d5c7a7}
+.heroCard .bio{color:#c0cbd0}
+.heroPreview{background:radial-gradient(ellipse at 50% 40%,#d1a95c38,transparent 55%),linear-gradient(145deg,#102c3bbd,#06121deF);border-color:#d6b8759c;box-shadow:inset 0 0 0 1px #fff1,0 18px 48px #0007}
+.heroPreview:before{opacity:.34;mix-blend-mode:screen}
+.heroPreview:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,#07152233 0%,transparent 27%,transparent 57%,#07131dd9 100%)}
+.heroPreview .previewText,.heroPreview .previewContinue{z-index:2}
+.heroPreview .previewAura{height:24px;background:#ffd886;filter:blur(34px);opacity:.46}
+.heroExplain{border-radius:7px}
+.homeFoot{color:#e3e2d8}
+@media(max-width:620px){.heroCard .avatar{height:clamp(62px,12vh,100px)}.heroCard .avatar img{object-position:center 19%}.titleCenter:before{inset:-28px -30px}.heroActions{filter:drop-shadow(0 8px 24px #0006)}}
+.heroPortrait{position:absolute;z-index:1;right:2%;bottom:2%;height:65%;max-width:48%;object-fit:contain;object-position:center bottom;filter:drop-shadow(0 14px 24px #000b) saturate(1.08);mask-image:linear-gradient(#000 0%,#000 78%,transparent 100%)}
+.heroPreview:before{opacity:.2;mix-blend-mode:screen}
+.heroPreview .previewText{top:28px;left:26px;right:auto;width:45%;text-align:left}
+.heroPreview .previewText h2{font-size:clamp(22px,2.6vw,36px)}
+.heroPreview .previewText p{max-width:22ch;line-height:1.5;color:#dfd4ba}
+@media(max-width:950px){.heroPortrait{height:65%;max-width:52%}}
 </style>
 </head>
 <body>
@@ -47,7 +95,7 @@
 </section>
 <section id="heroes" class="screen" aria-label="Warrior selection">
  <div class="screenHeading"><div><div class="eyebrow">CHOOSE YOUR DESTINY</div><h1 class="headTitle">THE WARRIORS</h1></div><button class="ghostbtn" data-home>← &nbsp; MAIN MENU</button></div>
- <div class="heroLayout"><div class="rosterSide"><div class="eyebrow">CHAMPIONS OF THE RAMAKIEN</div><div class="heroCards" id="heroCards"></div><div class="heroExplain frame"><div><h2 id="heroName">RAMA</h2><p id="heroBio">The righteous prince of Ayodhya, master of the celestial bow.</p></div><button class="goldbtn" id="heroConfirm">SELECT WARRIOR →</button></div></div><div class="heroPreview" id="heroPreview"><div class="previewText"><div class="eyebrow">LIVE 3D PREVIEW</div><h2 id="previewHeroName">RAMA</h2><p id="previewHeroDesc">THE RIGHTEOUS KING</p></div><div class="previewAura"></div><div class="previewContinue"><div class="frame" style="padding:12px 15px;margin-bottom:10px"><div class="eyebrow" style="font-size:9px">COMBAT STYLE</div><div id="heroStats" style="font-size:12px;color:#d8e4e9;margin-top:5px">Ranged • Balanced • Celestial Bow</div></div><button class="goldbtn" id="heroGoChapter" style="width:100%">CHOOSE A CHAPTER →</button></div></div></div>
+ <div class="heroLayout"><div class="rosterSide"><div class="eyebrow">CHAMPIONS OF THE RAMAKIEN</div><div class="heroCards" id="heroCards"></div><div class="heroExplain frame"><div><h2 id="heroName">RAMA</h2><p id="heroBio">The righteous prince of Ayodhya, master of the celestial bow.</p></div><button class="goldbtn" id="heroConfirm">SELECT WARRIOR →</button></div></div><div class="heroPreview" id="heroPreview"><img id="heroPortrait" class="heroPortrait" alt="" aria-hidden="true"><div class="previewText"><div class="eyebrow">CHAMPION PROFILE</div><h2 id="previewHeroName">RAMA</h2><p id="previewHeroDesc">THE RIGHTEOUS KING</p></div><div class="previewAura"></div><div class="previewContinue"><div class="frame" style="padding:12px 15px;margin-bottom:10px"><div class="eyebrow" style="font-size:9px">COMBAT STYLE</div><div id="heroStats" style="font-size:12px;color:#d8e4e9;margin-top:5px">Ranged • Balanced • Celestial Bow</div></div><button class="goldbtn" id="heroGoChapter" style="width:100%">CHOOSE A CHAPTER →</button></div></div></div>
 </section>
 <section id="armory" class="screen" aria-label="Persistent upgrade armory">
  <div class="armoryWrap"><div class="screenHeading"><div><div class="eyebrow">HONOUR YOUR VICTORIES</div><h1 class="headTitle">THE ROYAL ARMORY</h1></div><button class="ghostbtn" data-home>← &nbsp; MAIN MENU</button></div><div class="armoryHead"><div><div class="eyebrow">PERMANENT BLESSINGS</div><p style="margin:6px 0 0;color:#bdcad4;font-size:12px">Spend the gems earned in battle to strengthen every future journey.</p></div><div class="resourcePill">✦ <span id="armoryGems">0</span> GEMS</div></div><div class="shopGrid" id="armoryCards"></div><div class="shopFoot frame"><span>UPGRADES APPLY TO EVERY CHAPTER AND STACK WITH LEVEL-UP BLESSINGS.</span><span id="armoryTotal">0 PURCHASES</span></div></div>
