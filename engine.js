@@ -185,10 +185,35 @@ function updateHUD(){$('healthBar').style.width=(player?player.health/player.max
 function spawnProjectile(fromX,fromZ,target,color,damage,type='arrow'){let dx=target.x-fromX,dz=target.z-fromZ,len=Math.hypot(dx,dz)||1;projectiles.push({x:fromX,z:fromZ,y:1.22,dx:dx/len,dz:dz/len,target,speed:type==='bolt'?17:15,damage,color,life:2.1,r:type==='bolt'?.15:.055,type,hit:false});}
 function nearestEnemy(range=15){let best=null,bd=range;for(const e of enemies){const d=Math.hypot(e.x-player.x,e.z-player.z);if(d<bd){best=e;bd=d;}}return best;}
 function autoAttack(dt){attackClock-=dt;if(attackClock<=0){const target=nearestEnemy(15);if(target){player.angle=Math.atan2(target.x-player.x,target.z-player.z);const type=selectedHero==='sita'?'lotus':'arrow';spawnProjectile(player.x,player.z,target,selectedHero==='sita'?[1,.49,.82]:[.43,.84,1],player.damage*(selectedHero==='lakshmana'?13:10),type);sfx('arrow');attackClock=selectedHero==='lakshmana'?.75:1.05;}else attackClock=.35;}}
-function useSkill(n){if(mode!=='battle'||!player||skillCD[n]>0)return;resumeAudio();const h=HEROES[selectedHero];if(n===0){const e=nearestEnemy(18);if(e){spawnProjectile(player.x,player.z,e,h.gold.map(c=>Math.min(1,c+.1)),player.damage*32,'bolt');sfx('arrow');}else{for(let i=0;i<9;i++)spawnBurst(player.x,player.z,choose([h.gold,[.48,.83,1]]),.4,rand(1.8,3.5));sfx('arrow');}skillCD[0]=3.2;}
- if(n===1){const speed=player.speed;const dirx=Math.sin(player.angle),dirz=Math.cos(player.angle);player.x=clamp(player.x+dirx*4.4,-13,13);player.z=clamp(player.z+dirz*4.4,-13,13);addRing(player.x,player.z,[.40,.87,1],.4,4.5,.5);for(const e of enemies){const d=Math.hypot(e.x-player.x,e.z-player.z);if(d<4.2)damageEnemy(e,player.damage*26*(1-d/7));}for(let i=0;i<26;i++)spawnBurst(player.x,player.z,choose([[.35,.86,1],[1,.74,.28],[.86,.96,1]]),.28,rand(1.2,5));sfx('leap');skillCD[1]=7.2;}
- if(n===2){addRing(player.x,player.z,h.gold,.1,6.6,1);for(const e of enemies){const d=Math.hypot(e.x-player.x,e.z-player.z);if(d<6.5){damageEnemy(e,player.damage*22*(1-d/9));const k=2.6/(d||1);e.x+=(e.x-player.x)*k;e.z+=(e.z-player.z)*k;}}for(let i=0;i<44;i++)spawnBurst(player.x,player.z,choose([h.gold,[.9,.3,.16],[.53,.87,1]]),.32,rand(1.8,5.4));sfx('aura');skillCD[2]=13.0;}
- updateSkillHud();}
+function useSkill(n){
+ if(mode!=='battle'||!player||skillCD[n]>0)return;
+ resumeAudio();
+ const h=HEROES[selectedHero]||HEROES.rama,ox=player.x,oz=player.z;
+ if(n===0){
+  const e=nearestEnemy(18),tx=e?e.x:ox+Math.sin(player.angle)*10,tz=e?e.z:oz+Math.cos(player.angle)*10;
+  if(e){spawnProjectile(ox,oz,e,h.gold.map(c=>Math.min(1,c+.1)),player.damage*32,'bolt');sfx('arrow');}
+  else{for(let i=0;i<9;i++)spawnBurst(ox,oz,choose([h.gold,[.48,.83,1]]),.4,rand(1.8,3.5));sfx('arrow');}
+  RXskill(0,ox,oz,tx,tz);
+  skillCD[0]=3.2;
+ }
+ if(n===1){
+  const dirx=Math.sin(player.angle),dirz=Math.cos(player.angle);
+  player.x=clamp(player.x+dirx*4.4,-13,13);player.z=clamp(player.z+dirz*4.4,-13,13);
+  addRing(player.x,player.z,[.40,.87,1],.4,4.5,.5);
+  for(const e of enemies){const d=Math.hypot(e.x-player.x,e.z-player.z);if(d<4.2)damageEnemy(e,player.damage*26*(1-d/7));}
+  for(let i=0;i<26;i++)spawnBurst(player.x,player.z,choose([[.35,.86,1],[1,.74,.28],[.86,.96,1]]),.28,rand(1.2,5));
+  RXskill(1,ox,oz,player.x,player.z);
+  sfx('leap');skillCD[1]=7.2;
+ }
+ if(n===2){
+  addRing(player.x,player.z,h.gold,.1,6.6,1);
+  for(const e of enemies){const d=Math.hypot(e.x-player.x,e.z-player.z);if(d<6.5){damageEnemy(e,player.damage*22*(1-d/9));const k=2.6/(d||1);e.x+=(e.x-player.x)*k;e.z+=(e.z-player.z)*k;}}
+  for(let i=0;i<44;i++)spawnBurst(player.x,player.z,choose([h.gold,[.9,.3,.16],[.53,.87,1]]),.32,rand(1.8,5.4));
+  RXskill(2,ox,oz,player.x,player.z);
+  sfx('aura');skillCD[2]=13.0;
+ }
+ updateSkillHud();
+}
 function spawnBurst(x,z,color,scale=1,speed=2){const a=rand(0,TAU),v=rand(speed*.4,speed);fx.push({x:x+rand(-.25,.25),z:z+rand(-.25,.25),y:rand(.2,1.7),vx:Math.cos(a)*v,vz:Math.sin(a)*v,vy:rand(.1,2.2),life:rand(.32,.85),maxLife:.85,size:rand(.045,.12)*scale,color,kind:'spark'});}
 function addRing(x,z,color,r0,rmax,life){fx.push({x,z,y:.08,vx:0,vz:0,vy:0,life,maxLife:life,size:r0,maxSize:rmax,color,kind:'ring'});}
 function damageEnemy(e,damage){if(!e||e.health<=0)return;e.health-=damage;e.hitFlash=.11;floaters.push({x:e.x,y:2.5*(e.scale||1),z:e.z,text:Math.round(damage),life:.8,color:'#ffda82'});for(let i=0;i<4;i++)spawnBurst(e.x,e.z,e.boss?[1,.23,.12]:[1,.59,.28],.5,rand(1,3));sfx('hit');if(e.health<=0){kills++;stageKills++;xp+=1;gems+=Math.round((e.boss?70:(rand(3,9)|0))*(1+(permanent.fortune||0)*.1));if(e.boss){bossEnemy=null;$('bossbar').classList.remove('show');gems+=50;alertWave('THE KING FALLS','THE LIGHT OF DHARMA PREVAILS');}if(Math.random()<.11){player.health=Math.min(player.maxHealth,player.health+8);floaters.push({x:e.x,y:1.1,z:e.z,text:'+8 HP',life:1,color:'#85f7c1'});}enemies=enemies.filter(x=>x!==e);if(xp>=xpNeed)levelUp();updateHUD();}}
@@ -322,16 +347,56 @@ function RXfx(){for(const p of fx){const k=clamp(p.life/p.maxLife,0,1),c=p.color
  if(p.kind==='spark'){const s=p.size*k;call(M.smallSphere,Xf(p.x,p.y,p.z,0,0,0,s,s,s),c,c.map(v=>v*1.8),.9,.1)}
  else if(p.kind==='glow'){const s=p.size*(.35+.65*k);call(M.sphere,Xf(p.x,p.y,p.z,0,0,0,s,s,s),c,c.map(v=>v*2.2),.55*k+.05,.2)}
  else if(p.kind==='pillar'){const h=p.maxSize*Math.min(1,u*5),w=p.size*(1-u*.5);call(M.cyl,Xf(p.x,h/2,p.z,0,0,0,w*.8,h,w*.8),c,c.map(v=>v*.9),.2*k,.1);call(M.cyl,Xf(p.x,h/2,p.z,0,0,0,w*.28,h,w*.28),[1,1,1],[1.1,1.0,.8],.3*k,.1)}
- else{const r=p.size+(p.maxSize-p.size)*u,y=p.y||.07;call(M.ringFX,Xf(p.x,y,p.z,0,0,0,r,1,r),c,c.map(v=>v*2.2),.85*k,.4);call(M.ringFX,Xf(p.x,y+.02,p.z,0,0,0,r*.84,.7,r*.84),[1,1,1],[1.3,1.2,1],.5*k,.3)}}}
+ else if(p.kind==='beam'){const dx=p.tx-p.x,dz=p.tz-p.z,len=Math.hypot(dx,dz),a=Math.atan2(dx,dz),mx=(p.x+p.tx)*.5,mz=(p.z+p.tz)*.5,w=p.size*(.45+.55*k);if(len>.03){call(M.cyl,Xf(mx,p.y,mz,Math.PI/2,a,0,w*.56,len,w*.56),[1,1,1],[1.9,1.7,1.25],.72*k+.08,.85);call(M.cyl,Xf(mx,p.y,mz,Math.PI/2,a,0,w*1.8,len*1.04,w*1.8),c,c.map(v=>v*2.6),.22*k+.035,.2)}}
+ else if(p.kind==='petal'){const s=p.size*(.35+.65*k),a=p.angle||0;call(M.sphere,Xf(p.x,p.y,p.z,p.rx||0,a,p.rz||.45,s*1.65,s*.48,s*.55),c,c.map(v=>v*1.5),.78*k+.04,.6)}
+ else{const r=p.size+(p.maxSize-p.size)*u,y=p.y||.07;call(M.ringFX,Xf(p.x,y,p.z,0,0,0,r,1,r),c,c.map(v=>v*2.2),.85*k,.4);call(M.ringFX,Xf(p.x,y+.02,p.z,0,0,0,r*.84,.7,r*.84),[1,1,1],[1.3,1.2,1],.5*k,.3)}
+}}
 function RXproj(){for(const p of projectiles){const a=Math.atan2(p.dx,p.dz),c=p.color,b=p.type==='bolt',len=b?2.8:.95,w=p.r*(b?1.15:1.3),sx=Math.sin(a),sz=Math.cos(a),bx=p.x-sx*len*.45,bz=p.z-sz*len*.45;
  call(M.cyl,Xf(bx,p.y,bz,Math.PI/2,a,0,w*.55,len,w*.55),[1,1,1],[2.6,2.4,1.9],1,.9);call(M.cyl,Xf(bx,p.y,bz,Math.PI/2,a,0,w*1.9,len*1.1,w*1.9),c,c.map(v=>v*2.4),.3,.2);call(M.sphere,Xf(p.x,p.y,p.z,0,0,0,w*3.6,w*3.6,w*3.6),c,c.map(v=>v*3),.4,.2);
  if(b)for(let i=1;i<7;i++){const q=w*(6.2-i*.7);call(M.ringFX,Xf(p.x-sx*i*.5,p.y,p.z-sz*i*.5,Math.PI/2,a,0,q,1,q),c,c.map(v=>v*2.5),.55*(1-i/7),.3)}}}
 function RXhero(t){const g=(HEROES[selectedHero]||HEROES.rama).gold,x=player.x,z=player.z;call(M.ringFX,Xf(x,.075,z,0,t*.7,0,1.25,1,1.25),g,g.map(v=>v*1.6),.8,.4);call(M.ringFX,Xf(x,.08,z,0,-t*1.1,0,.9,1,.9),[1,1,1],[1.2,1.1,.9],.5,.3);call(M.sphere,Xf(x,1.3,z,0,0,0,1.5,1.8,1.5),g,g.map(v=>v*.4),.05,.1)}
 function RXboss(e,t){call(M.ringFX,Xf(e.x,.07,e.z,0,t,0,2.4,1,2.4),[1,.25,.1],[3,.5,.15],.7,.4);call(M.ringFX,Xf(e.x,.09,e.z,0,-t*1.3,0,1.7,1,1.7),[1,.7,.3],[2.5,1.4,.4],.5,.3)}
-function RXskill(n,ox,oz){const h=HEROES[selectedHero]||HEROES.rama,g=h.gold,px=player.x,pz=player.z;camShake=[.35,.8,1.0][n];const add=o=>fx.push(Object.assign({vx:0,vz:0,vy:0,y:.08},o));
- if(n===0)add({kind:'ring',x:ox,z:oz,y:1.25,life:.35,maxLife:.35,size:.2,maxSize:1.6,color:g});
- else if(n===1){for(let i=0;i<24;i++){const k=i/23;add({kind:'glow',x:ox+(px-ox)*k,z:oz+(pz-oz)*k,y:1+Math.sin(k*Math.PI)*1.3,life:.45+k*.5,maxLife:.95,size:.5*(1-k*.45),color:[.4,.9,1]})}add({kind:'pillar',x:px,z:pz,y:0,life:.8,maxLife:.8,size:1.1,maxSize:7,color:[.4,.9,1]});add({kind:'ring',x:ox,z:oz,life:.5,maxLife:.5,size:.3,maxSize:3.6,color:[.4,.9,1]})}
- else{for(let i=0;i<3;i++)add({kind:'ring',x:px,z:pz,life:.7+i*.25,maxLife:.7+i*.25,size:.2,maxSize:4.4+i*1.4,color:g});for(let i=0;i<10;i++){const a=i/10*TAU;add({kind:'pillar',x:px+Math.cos(a)*3.4,z:pz+Math.sin(a)*3.4,y:0,life:.9,maxLife:.9,size:.32,maxSize:5.5,color:g})}}}
+function RXskill(n,ox,oz,tx=player?.x??ox,tz=player?.z??oz){
+ const type=selectedHero||'rama';
+ const palette={
+  rama:{core:[1,.72,.24],edge:[.34,.78,1],spark:[1,.96,.72]},
+  sita:{core:[1,.34,.69],edge:[.76,.92,1],spark:[.97,.75,1]},
+  hanuman:{core:[1,.72,.31],edge:[.34,.86,1],spark:[1,.96,.73]},
+  lakshmana:{core:[.28,1,.63],edge:[.28,.58,1],spark:[1,.79,.34]},
+  ravana:{core:[1,.22,.12],edge:[.78,.04,.14],spark:[1,.62,.2]}
+ }[type]||{core:[1,.72,.24],edge:[.34,.78,1],spark:[1,.96,.72]};
+ const g=palette.core,edge=palette.edge,spark=palette.spark,px=player.x,pz=player.z;
+ camShake=[.45,.9,1.25][n]||.4;
+ const add=o=>fx.push(Object.assign({vx:0,vz:0,vy:0,y:.08},o));
+ const petalRing=(x,z,r,count=10,life=.55)=>{for(let i=0;i<count;i++){const a=i/count*TAU;add({kind:'petal',x:x+Math.cos(a)*r,z:z+Math.sin(a)*r,y:.38+Math.sin(a*2)*.08,angle:-a,life:life,maxLife:life,size:.16,color:i%2?g:spark});}};
+ if(n===0){
+  add({kind:'beam',x:ox,z:oz,y:1.25,tx,tz,life:.27,maxLife:.27,size:type==='lakshmana'?.105:.145,color:g});
+  add({kind:'beam',x:ox,z:oz,y:1.29,tx,tz,life:.18,maxLife:.18,size:.038,color:[1,1,1]});
+  if(type==='lakshmana')add({kind:'beam',x:ox+.13,z:oz-.08,y:1.17,tx:tx+.13,tz:tz-.08,life:.22,maxLife:.22,size:.055,color:edge});
+  add({kind:'ring',x:tx,z:tz,y:.08,life:.38,maxLife:.38,size:.12,maxSize:1.7,color:spark});
+  for(let i=0;i<14;i++){const a=i/14*TAU;add({kind:'spark',x:tx,z:tz,y:1.15+Math.sin(a)*.12,vx:Math.cos(a)*rand(1.2,3.2),vz:Math.sin(a)*rand(1.2,3.2),vy:rand(.3,1.7),life:rand(.25,.48),maxLife:.48,size:rand(.045,.095),color:i%3?edge:spark});}
+  if(type==='sita')petalRing(tx,tz,.72,9,.52);
+  if(type==='hanuman'){add({kind:'ring',x:ox,z:oz,y:.08,life:.28,maxLife:.28,size:.16,maxSize:1.25,color:edge});}
+ }
+ else if(n===1){
+  for(let i=0;i<30;i++){const k=i/29;add({kind:'glow',x:ox+(px-ox)*k,z:oz+(pz-oz)*k,y:1+Math.sin(k*Math.PI)*1.45,life:.3+k*.48,maxLife:.78,size:.4*(1-k*.45),color:i%3?edge:spark});}
+  add({kind:'pillar',x:px,z:pz,y:0,life:.62,maxLife:.62,size:type==='hanuman'?1.35:.82,maxSize:type==='hanuman'?6.6:4.5,color:edge});
+  add({kind:'ring',x:ox,z:oz,y:.08,life:.42,maxLife:.42,size:.25,maxSize:2.7,color:spark});
+  add({kind:'ring',x:px,z:pz,y:.08,life:.48,maxLife:.48,size:.18,maxSize:type==='hanuman'?5.3:3.7,color:g});
+  if(type==='sita')petalRing(px,pz,1.0,12,.6);
+  for(let i=0;i<16;i++){const k=i/16*TAU;add({kind:'spark',x:px,z:pz,y:.18,vx:Math.cos(k)*rand(1.8,4.2),vz:Math.sin(k)*rand(1.8,4.2),vy:rand(.4,1.7),life:rand(.28,.55),maxLife:.55,size:rand(.045,.085),color:i%2?edge:spark});}
+ }
+ else{
+  for(let i=0;i<4;i++)add({kind:'ring',x:px,z:pz,y:.075+i*.025,life:.65+i*.12,maxLife:.65+i*.12,size:.12+i*.08,maxSize:3.8+i*1.45,color:i%2?edge:g});
+  const count=type==='sita'?12:14;
+  for(let i=0;i<count;i++){const a=i/count*TAU,r=type==='hanuman'?3.9:3.25;add({kind:'pillar',x:px+Math.cos(a)*r,z:pz+Math.sin(a)*r,y:0,life:.78,maxLife:.78,size:type==='hanuman'?.38:.25,maxSize:type==='hanuman'?5.8:4.6,color:i%2?edge:g});}
+  for(let i=0;i<28;i++){const a=i/28*TAU,v=rand(2.2,5.5);add({kind:'spark',x:px,z:pz,y:.22,vx:Math.cos(a)*v,vz:Math.sin(a)*v,vy:rand(.5,2.3),life:rand(.28,.62),maxLife:.62,size:rand(.045,.1),color:i%3?g:spark});}
+  if(type==='sita')petalRing(px,pz,1.25,16,.72);
+  else if(type==='hanuman'){petalRing(px,pz,1.05,8,.45);add({kind:'ring',x:px,z:pz,y:1.0,life:.6,maxLife:.6,size:.7,maxSize:2.2,color:spark});}
+  else if(type==='rama'){for(let i=0;i<3;i++)add({kind:'beam',x:px-2.4,z:pz-i*.2,y:1.1+i*.16,tx:px+2.4,tz:pz+i*.2,life:.24+i*.04,maxLife:.28,size:.05,color:i===1?spark:g});}
+  else if(type==='lakshmana'){for(let i=0;i<2;i++)add({kind:'beam',x:px-2.6,z:pz+(i?-.45:.45),y:1.1,tx:px+2.6,tz:pz+(i?-.45:.45),life:.25,maxLife:.25,size:.05,color:edge});}
+ }
+}
 RXinit();
 function resize(){DPR=Math.min(quality==='low'?1:quality==='medium'?1.5:2,window.devicePixelRatio||1);W=window.innerWidth;H=window.innerHeight;canvas.width=Math.floor(W*DPR);canvas.height=Math.floor(H*DPR);canvas.style.width=W+'px';canvas.style.height=H+'px';gl.viewport(0,0,canvas.width,canvas.height);RXsize();proj=perspective(Math.PI/3.15,canvas.width/canvas.height,.1,100);}
 window.addEventListener('resize',resize);resize();
