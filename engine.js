@@ -104,7 +104,17 @@ function fighterDraw(f,t,hero=false,boss=false){const cfg=hero?HEROES[f.type]||H
   add(M.cyl,0,1.72,0,.13,.24,.13,skin);add(M.sphere,0,2.02,0,.31,.34,.27,skin,0,0,0,[.04,.012,0],.48);add(M.sphere,-.12,2.07,.22,.05,.045,.025,[1,.06,.025],0,0,0,[.55,.015,.005],.2);add(M.sphere,.12,2.07,.22,.05,.045,.025,[1,.06,.025],0,0,0,[.55,.015,.005],.2);add(M.cyl,0,2.30,0,.28,.09,.28,gold,0,0,0,[.12,.04,0],.85);add(M.cone,0,2.54,0,.25,.48,.25,gold,0,0,0,[.12,.03,0],.8);
   for(const side of [-1,1]){add(M.cone,side*.25,2.45,-.02,.12,.35,.12,[.25,.08,.055],0,0,side*-.28,[.06,0,0],.4);}
   add(M.cyl,.67,.75,.02,.055,1.14,.055,[.27,.13,.11],0,0,0,[.12,.01,0],.75);add(M.sphere,.67,1.38,.02,.22,.24,.22,gold,0,0,0,[.13,.035,0],.8);
-  if(boss){for(let i=0;i<4;i++){const side=i<2?-1:1,layer=i%2;add(M.sphere,side*(.28+layer*.31),2.12-layer*.04,-.06,.18,.21,.18,skin);add(M.cyl,side*(.28+layer*.31),2.31-layer*.04,-.06,.18,.065,.18,gold);add(M.cone,side*(.28+layer*.31),2.48-layer*.04,-.06,.13,.25,.13,gold,0,0,0,[.14,.035,0],.85);}}
+  if(boss){
+   // Nine secondary heads around the central face: a readable ten-headed Tosakanth silhouette.
+   const heads=[[-.76,2.10,-.08,.125],[-.54,2.19,-.10,.14],[-.29,2.26,-.13,.145],[0,2.29,-.15,.145],[.29,2.26,-.13,.145],[.54,2.19,-.10,.14],[.76,2.10,-.08,.125],[-.43,1.86,-.19,.12],[.43,1.86,-.19,.12]];
+   for(const [hx,hy,hz,r] of heads){
+    add(M.sphere,hx,hy,hz,r*1.05,r*1.16,r,skin,0,0,0,[.055,.01,0],.48);
+    add(M.cyl,hx,hy+r*1.05,hz,r*1.08,r*.36,r*1.08,gold,0,0,0,[.12,.045,.005],.9);
+    add(M.cone,hx,hy+r*1.67,hz,r*.83,r*1.35,r*.83,gold,0,0,0,[.14,.035,0],.88);
+    add(M.cone,hx,hy+r*2.52,hz,r*.42,r*.76,r*.42,[1,.82,.43],0,0,0,[.25,.12,.025],.92);
+    add(M.smallSphere,hx,hy+.015,hz+r*.86,.022,.024,.012,[1,.07,.025],0,0,0,[.55,.01,0],.2);
+   }
+  }
   return;
  }
  // cloth silhouette, waist sash and layered chest armour
