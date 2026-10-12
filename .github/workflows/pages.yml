@@ -1,0 +1,50 @@
+name: Deploy Return of Rama to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Assemble the playable site
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist/assets
+          cat assetpack/part-*.b64 | tr -d '\n\r ' | base64 --decode > /tmp/ror-assets.zip
+          unzip -q /tmp/ror-assets.zip -d dist/assets
+          cp index.html engine.js assets.js dist/
+          touch dist/.nojekyll
+          test -s dist/index.html
+          test -s dist/engine.js
+          test -s dist/assets.js
+          test -s dist/assets/art/title-background.webp
+          test -s dist/assets/music/00_main_theme.mp3
+          test "$(find dist/assets -type f | wc -l)" -eq 17
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
