@@ -75,6 +75,10 @@ const MAT=(x,y,z,rx,ry,rz,sx,sy,sz)=>Xf(x,y,z,rx,ry,rz,sx,sy,sz);
 function groundObj(mesh,x,y,z,sx,sy,sz,color,rot=0,em=[0,0,0],gloss=.4){staticCalls.push({mesh,model:Xf(x,y,z,0,rot,0,sx,sy,sz),color,emissive:em,alpha:1,gloss});}
 function cylinderObj(x,y,z,sx,sy,sz,color,rot=0){groundObj(M.cyl,x,y,z,sx,sy,sz,color,rot);}
 function buildStageEnvironment(idx){staticCalls.length=0;const st=STAGES[idx],floor=st.floor;groundObj(M.box,0,-.38,0,34,.7,34,floor,0,[0,0,0],.08);groundObj(M.box,0,-.42,0,150,.7,150,floor.map(v=>v*.62),0,[0,0,0],.05);
+ // Compact prop helpers for ceremonial banners, flame bowls and guardian figures.
+ const banner=(x,z,h,col)=>{cylinderObj(x,h*.5,z,.035,h,.035,[.82,.63,.31]);groundObj(M.cone,x,h+.12,z,.10,.22,.10,[1,.83,.48],0,[.14,.05,.01],.8);groundObj(M.box,x-.25,h-.45,z,.48,.74,.055,col,0,[.06,.015,0],.45);groundObj(M.smallSphere,x-.25,h-.22,z+.04,.075,.075,.04,[1,.76,.31],0,[.12,.04,.005]);};
+ const brazier=(x,z)=>{cylinderObj(x,.35,z,.19,.7,.19,[.47,.24,.12]);groundObj(M.cyl,x,.74,z,.30,.10,.30,[.86,.57,.22],0,[.15,.055,.008],.8);groundObj(M.cone,x,1.05,z,.24,.62,.24,[1,.25,.045],0,[.7,.09,.01],.25);groundObj(M.cone,x,1.21,z,.12,.40,.12,[1,.72,.21],0,[1,.38,.035],.15);};
+ const guardian=(x,z,sc,col)=>{groundObj(M.box,x,.20,z,.82*sc,.34*sc,.55*sc,[.36,.23,.16]);groundObj(M.cyl,x,.70*sc,z,.27*sc,.78*sc,.27*sc,col);groundObj(M.sphere,x,1.19*sc,z,.36*sc,.40*sc,.32*sc,col,0,[.06,.02,0],.6);groundObj(M.cyl,x,1.47*sc,z,.33*sc,.10*sc,.33*sc,[.91,.65,.28],0,[.13,.04,.004],.85);groundObj(M.cone,x,1.73*sc,z,.29*sc,.45*sc,.29*sc,[.95,.67,.25],0,[.12,.04,.003],.8);groundObj(M.cone,x,2.02*sc,z,.11*sc,.25*sc,.11*sc,[1,.85,.48],0,[.15,.06,.008],.9);};
  // Raised ceremonial slabs, carved border lines and gold inlay circles.
  for(let x=-12;x<=12;x+=3)for(let z=-12;z<=12;z+=3){const tint=((Math.abs(x/3)+Math.abs(z/3))%2===0)?.018:-.012;groundObj(M.box,x,-.015,z,2.87,.055,2.87,floor.map(v=>clamp(v+tint,0,1)),0,[0,0,0],.12);}
  for(let k=-12;k<=12;k+=2){groundObj(M.box,k,.03,-14.1,1.8,.07,.08,[.7,.48,.21],0,[.06,.025,0],.7);groundObj(M.box,k,.03,14.1,1.8,.07,.08,[.7,.48,.21],0,[.06,.025,0],.7);}
@@ -91,6 +95,17 @@ function buildStageEnvironment(idx){staticCalls.length=0;const st=STAGES[idx],fl
  if(idx>=3){for(const side of [-1,1]){for(let z=-13;z<=13;z+=3.3){groundObj(M.box,side*13,1.3,z,1.1,2.6,2.4,[.38,.16,.15]);groundObj(M.box,side*13,2.75,z,1.7,.25,2.6,[.67,.3,.14]);groundObj(M.cone,side*13,3.5,z,1,.9,1,[.73,.12,.1]);groundObj(M.cone,side*13,4.1,z,.55,.65,.55,[.93,.51,.2]);}}
   for(const side of [-1,1])for(let z=-11;z<=11;z+=5.5){cylinderObj(side*8,.45,z,.3,.9,.3,[.34,.12,.12]);groundObj(M.cone,side*8,1.15,z,.53,.66,.53,[.97,.25,.08],0,[.18,.04,.01]);groundObj(M.sphere,side*8,1.0,z,.32,.4,.32,[1,.26,.04],0,[.6,.08,.01]);}}
  if(idx===4){groundObj(M.ring,0,.08,0,1.9,.3,1.9,[.55,.15,.18],0,[.11,0,0],.8);for(let i=0;i<12;i++){const a=i/12*TAU,x=Math.cos(a)*10,z=Math.sin(a)*10;pillar(x,z,3.2);groundObj(M.sphere,x,3.45,z,.16,.16,.16,[1,.57,.18],0,[.5,.14,.02]);}groundObj(M.box,0,.03,-11,9,.3,1,[.32,.09,.12]);for(let i=0;i<7;i++){const x=-6+i*2;groundObj(M.cone,x,rand(2.5,4.0),-10,.7,2,.7,[.38,.08,.13]);}}
+ // Stage storytelling props, kept near the arena edge so combat lanes stay open.
+ if(idx===0){
+  for(const side of [-1,1])for(let z=-6;z<=10;z+=8){guardian(side*8.6,z,1.12,[.31,.51,.34]);groundObj(M.torus,side*8.6,.11,z,1.0,.12,1.0,[.21,.56,.31],0,[.03,.08,.025],.4);}
+ }else if(idx===1){
+  for(const side of [-1,1])for(let z=-8;z<=8;z+=8){guardian(side*2.85,z,.9,[.42,.51,.57]);groundObj(M.ring,side*3.7,.20,z,.35,.3,.35,[.24,.72,.95],0,[.06,.28,.6],.8);}
+ }else if(idx===2){
+  for(const side of [-1,1])for(let z=-8;z<=8;z+=8){guardian(side*3.25,z,.92,[.59,.49,.32]);groundObj(M.box,side*3.8,.25,z,.18,.45,1.4,[.83,.64,.32],0,[.07,.025,.003],.8);}
+ }else{
+  for(const side of [-1,1]){banner(side*10.7,-7,4.0,idx===4?[.42,.04,.10]:[.62,.10,.07]);banner(side*10.7,1,3.6,idx===4?[.53,.05,.08]:[.78,.17,.07]);brazier(side*7.0,-6);brazier(side*7.0,6);guardian(side*9.5,0,1.1,[.39,.16,.14]);}
+  for(let z=-10;z<=10;z+=10)groundObj(M.torus,0,.10,z,2.0,.14,2.0,[.85,.44,.19],0,[.08,.02,.006],.8);
+ }
  // ornate arena sigil at center.
  groundObj(M.ring,0,.035,0,5,.22,5,[.84,.58,.24],0,[.06,.025,0],.85);groundObj(M.ring,0,.045,0,3.4,.22,3.4,[.87,.73,.43],0,[.05,.03,0],.7);groundObj(M.ring,0,.05,0,1.7,.22,1.7,[.7,.21,.16],0,[.08,.01,0],.6);
 }
@@ -99,9 +114,9 @@ function buildStageEnvironment(idx){staticCalls.length=0;const st=STAGES[idx],fl
 function fighterDraw(f,t,hero=false,boss=false){const cfg=hero?HEROES[f.type]||HEROES.rama:(boss?HEROES.ravana:null);const skin=cfg?cfg.skin:(f.skin||[.37,.49,.27]),cloth=cfg?cfg.cloth:(f.cloth||[.37,.1,.13]),cloth2=cfg?cfg.cloth2:(f.cloth2||[.68,.16,.13]),gold=cfg?cfg.gold:(f.gold||[.91,.57,.19]);const sc=(f.scale||1)*(boss?1.3:hero?1.25:1.12);const run=hero?Math.min(1,Math.hypot(input.x,input.z)):Math.min(1,Math.hypot(f.vx||0,f.vz||0));const swing=Math.sin(t*8+(f.seed||0))*0.42*run, bob=Math.abs(Math.sin(t*8+(f.seed||0)))*.06*run;const root=Xf(f.x,bob,f.z,0,f.angle||0,0,sc,sc,sc);const add=(mesh,x,y,z,sx,sy,sz,color,rx=0,ry=0,rz=0,em=[0,0,0],gloss=.55)=>part(root,mesh,MAT(x,y,z,rx,ry,rz,sx,sy,sz),color,em,1,gloss);
  if(!hero){
   // Low-cost but dimensional rakshasa rig: armour silhouette, animated limbs, horned chada and steel weapon.
-  add(M.cyl,0,.76,0,.39,.43,.31,cloth,0,0,0,[.02,0,0],.35);add(M.sphere,0,1.24,0,.48,.54,.32,cloth,0,0,0,[.02,0,0],.45);add(M.box,0,1.23,.21,.52,.40,.15,gold,0,0,0,[.09,.035,0],.8);add(M.cyl,0,.93,0,.44,.10,.34,gold,0,0,0,[.10,.035,0],.85);
+  add(M.cyl,0,.76,0,.39,.43,.31,cloth,0,0,0,[.02,0,0],.35);add(M.sphere,0,1.24,0,.48,.54,.32,cloth,0,0,0,[.02,0,0],.45);add(M.box,0,1.23,.21,.52,.40,.15,gold,0,0,0,[.09,.035,0],.8);add(M.sphere,0,1.27,.294,.19,.20,.065,cloth2,0,0,0,[.06,.01,0],.65);add(M.smallSphere,0,1.28,.355,.045,.052,.022,[1,.22,.08],0,0,0,[.6,.035,0],.25);for(let side of [-1,1]){add(M.cone,side*.17,1.34,.32,.07,.17,.06,gold,0,0,side*-.3,[.11,.03,0],.75);add(M.torus,side*.43,1.46,.015,.18,.03,.17,gold,0,0,0,[.08,.025,0],.75);}add(M.cyl,0,.93,0,.44,.10,.34,gold,0,0,0,[.10,.035,0],.85);
   for(const side of [-1,1]){add(M.sphere,side*.43,1.46,0,.26,.20,.29,gold,0,0,side*-.2,[.09,.025,0],.75);add(M.cyl,side*.20,.48,0,.16,.88,.16,cloth2,swing*side,0,0);add(M.cyl,side*.47,1.14,0,.145,.60,.145,skin,swing*side,0,side*-.12);add(M.sphere,side*.47,1.48,0,.17,.16,.18,gold,0,0,side*-.15,[.1,.03,0],.75);}
-  add(M.cyl,0,1.72,0,.13,.24,.13,skin);add(M.sphere,0,2.02,0,.31,.34,.27,skin,0,0,0,[.04,.012,0],.48);add(M.sphere,-.12,2.07,.22,.05,.045,.025,[1,.06,.025],0,0,0,[.55,.015,.005],.2);add(M.sphere,.12,2.07,.22,.05,.045,.025,[1,.06,.025],0,0,0,[.55,.015,.005],.2);add(M.cyl,0,2.30,0,.28,.09,.28,gold,0,0,0,[.12,.04,0],.85);add(M.cone,0,2.54,0,.25,.48,.25,gold,0,0,0,[.12,.03,0],.8);
+  add(M.cyl,0,1.72,0,.13,.24,.13,skin);add(M.sphere,0,2.02,0,.31,.34,.27,skin,0,0,0,[.04,.012,0],.48);add(M.sphere,-.12,2.07,.22,.05,.045,.025,[1,.06,.025],0,0,0,[.55,.015,.005],.2);add(M.sphere,.12,2.07,.22,.05,.045,.025,[1,.06,.025],0,0,0,[.55,.015,.005],.2);add(M.cone,-.115,1.91,.255,.045,.10,.035,[.94,.82,.65],Math.PI,0,.12,[.04,.025,.01],.65);add(M.cone,.115,1.91,.255,.045,.10,.035,[.94,.82,.65],Math.PI,0,-.12,[.04,.025,.01],.65);add(M.box,0,2.145,.238,.30,.045,.035,[.18,.06,.045],0,0,0,[.035,.005,0],.35);add(M.cyl,0,2.30,0,.28,.09,.28,gold,0,0,0,[.12,.04,0],.85);add(M.cone,0,2.54,0,.25,.48,.25,gold,0,0,0,[.12,.03,0],.8);
   for(const side of [-1,1]){add(M.cone,side*.25,2.45,-.02,.12,.35,.12,[.25,.08,.055],0,0,side*-.28,[.06,0,0],.4);}
   add(M.cyl,.67,.75,.02,.055,1.14,.055,[.27,.13,.11],0,0,0,[.12,.01,0],.75);add(M.sphere,.67,1.38,.02,.22,.24,.22,gold,0,0,0,[.13,.035,0],.8);
   if(boss){
@@ -123,9 +138,9 @@ function fighterDraw(f,t,hero=false,boss=false){const cfg=hero?HEROES[f.type]||H
  add(M.box,-.11,1.25,.278,.12,.62,.09,cloth2,0,0,-.45,[.07,.01,.01],.55);add(M.box,.11,1.24,.283,.07,.56,.085,gold,0,0,.40,[.12,.065,.01],.9);
  for(const side of [-1,1]){add(M.sphere,side*.43,1.47,0,.25,.20,.29,gold,0,0,side*-.22,[.11,.05,.008],.8);add(M.sphere,side*.46,1.48,.04,.17,.12,.23,cloth2,0,0,side*-.25,[.06,.01,.01],.6);add(M.sphere,side*.27,1.04,.02,.20,.13,.20,cloth2,0,0,0,[.02,0,0],.35);}
  // segmented legs, anklets and gold greaves
- for(const side of [-1,1]){const legRoot=mul(root,MAT(side*.19,.78,0,swing*side,0,0,1,1,1));part(legRoot,M.cyl,MAT(0,-.20,0,0,0,0,.19,.50,.19),cloth, [0,0,0],1,.35);part(legRoot,M.cyl,MAT(0,-.42,.012,0,0,0,.18,.12,.18),gold,[.08,.04,0],1,.85);const calf=mul(legRoot,MAT(0,-.44,0,-swing*side*.45,0,0,1,1,1));part(calf,M.cyl,MAT(0,-.17,0,0,0,0,.145,.42,.145),cloth2,[.02,0,0],1,.4);part(calf,M.cyl,MAT(0,-.18,.09,0,0,0,.155,.25,.075),gold,[.1,.05,.01],1,.85);part(calf,M.box,MAT(0,-.39,.075,0,0,0,.32,.12,.42),[.22,.15,.13],[0,0,0],1,.25);}
+ for(const side of [-1,1]){const legRoot=mul(root,MAT(side*.19,.78,0,swing*side,0,0,1,1,1));part(legRoot,M.cyl,MAT(0,-.20,0,0,0,0,.19,.50,.19),cloth, [0,0,0],1,.35);part(legRoot,M.cyl,MAT(0,-.42,.012,0,0,0,.18,.12,.18),gold,[.08,.04,0],1,.85);const calf=mul(legRoot,MAT(0,-.44,0,-swing*side*.45,0,0,1,1,1));part(calf,M.cyl,MAT(0,-.17,0,0,0,0,.145,.42,.145),cloth2,[.02,0,0],1,.4);part(calf,M.cyl,MAT(0,-.18,.09,0,0,0,.155,.25,.075),gold,[.1,.05,.01],1,.85);part(calf,M.box,MAT(0,-.39,.075,0,0,0,.32,.12,.42),[.22,.15,.13],[0,0,0],1,.25);part(legRoot,M.box,MAT(0,-.19,.13,0,0,side*.04,.205,.26,.075),gold,[.07,.035,0],1,.84);part(legRoot,M.smallSphere,MAT(0,-.19,.176,0,0,0,.035,.055,.018),[1,.79,.32],[.12,.05,.005],1,.8);part(calf,M.torus,MAT(0,-.11,0,0,0,0,.148,.148,.148),gold,[.10,.04,.005],1,.88);}
  // arm joints with bracers, wrist cuffs and hands
- for(const side of [-1,1]){const armRoot=mul(root,MAT(side*.47,1.43,0,swing*(side===1?1:-1)+(hero?.06:0),0,side*-.15,1,1,1));part(armRoot,M.cyl,MAT(0,-.20,0,0,0,0,.17,.43,.17),skin);part(armRoot,M.sphere,MAT(0,-.03,0,0,0,0,.205,.20,.205),gold,[.10,.04,0]);part(armRoot,M.cyl,MAT(0,-.42,.01,0,0,0,.135,.12,.14),gold,[.10,.045,0],1,.8);part(armRoot,M.cyl,MAT(0,-.59,0,0,0,0,.125,.31,.125),cloth2);part(armRoot,M.sphere,MAT(0,-.78,.03,0,0,0,.11,.12,.115),skin);}
+ for(const side of [-1,1]){const armRoot=mul(root,MAT(side*.47,1.43,0,swing*(side===1?1:-1)+(hero?.06:0),0,side*-.15,1,1,1));part(armRoot,M.cyl,MAT(0,-.20,0,0,0,0,.17,.43,.17),skin);part(armRoot,M.sphere,MAT(0,-.03,0,0,0,0,.205,.20,.205),gold,[.10,.04,0]);part(armRoot,M.torus,MAT(0,-.33,0,0,0,0,.165,.165,.165),gold,[.1,.04,0],1,.9);part(armRoot,M.cyl,MAT(0,-.42,.01,0,0,0,.135,.12,.14),gold,[.10,.045,0],1,.8);part(armRoot,M.torus,MAT(0,-.48,0,0,0,0,.14,.14,.14),[1,.79,.36],[.12,.05,.005],1,.9);part(armRoot,M.cyl,MAT(0,-.59,0,0,0,0,.125,.31,.125),cloth2);part(armRoot,M.box,MAT(0,-.60,.105,0,0,0,.21,.24,.065),gold,[.05,.02,0],1,.8);part(armRoot,M.smallSphere,MAT(0,-.60,.151,0,0,0,.035,.06,.023),[1,.78,.28],[.18,.07,.01],1,.8);part(armRoot,M.torus,MAT(0,-.72,0,0,0,0,.12,.12,.12),gold,[.1,.04,0],1,.85);part(armRoot,M.sphere,MAT(0,-.78,.03,0,0,0,.11,.12,.115),skin);}
  // neck and expressive head
  add(M.cyl,0,1.72,0,.13,.24,.13,skin);add(M.sphere,0,2.02,0,.285,.34,.255,skin,0,0,0,[.035,.018,.01],.45);add(M.sphere,-.112,2.065,.209,.051,.06,.025,[.96,.88,.70],0,0,0,[.1,.06,.03],.35);add(M.sphere,.112,2.065,.209,.051,.06,.025,[.96,.88,.70],0,0,0,[.1,.06,.03],.35);add(M.sphere,-.112,2.065,.231,.024,.035,.018,[.06,.08,.1]);add(M.sphere,.112,2.065,.231,.024,.035,.018,[.06,.08,.1]);add(M.sphere,0,1.98,.25,.055,.055,.06,skin);
  // hair, crown base, tiered gold chada, pointed crest and gems
@@ -133,15 +148,60 @@ function fighterDraw(f,t,hero=false,boss=false){const cfg=hero?HEROES[f.type]||H
  // shoulder cape and back plate
  add(M.box,0,1.36,-.22,.8,.49,.12,cloth,0,0,0,[.015,0,0],.25);add(M.box,0,1.16,-.235,.70,.10,.13,cloth2,0,0,0,[.04,0,0],.5);
  // Gold shoulder chains, silk robe panels and a forehead tilak evoke Thai Khon regalia.
+ // Layered Khon regalia: enamel breastplate, jewel settings, filigree and waist ornaments.
+ add(M.sphere,0,1.30,.292,.245,.30,.075,gold,0,0,0,[.16,.07,.012],.96);
+ add(M.sphere,0,1.31,.358,.125,.19,.034,cloth2,0,0,0,[.08,.012,.008],.7);
+ add(M.smallSphere,0,1.33,.395,.052,.065,.025,hero?(f.type==='sita'?[.98,.43,.7]:[.3,.86,1]):[1,.25,.12],0,0,0,[.48,.2,.07],.3);
+ add(M.torus,0,1.23,.35,.18,.035,.045,gold,Math.PI/2,0,0,[.10,.045,.008],.92);
+ for(let row=0;row<3;row++)for(const side of [-1,1]){
+  add(M.sphere,side*(.17-row*.018),1.40-row*.105,.324,.075,.042,.026,row===1?cloth2:gold,0,0,side*.12,[.08,.025,.004],.8);
+  add(M.smallSphere,side*(.17-row*.018),1.40-row*.105,.354,.022,.022,.012,[1,.81,.37],0,0,0,[.24,.12,.02],.7);
+ }
+ for(const side of [-1,1]){
+  add(M.cone,side*.48,1.56,-.015,.16,.29,.16,gold,0,0,side*-.42,[.13,.045,.006],.85);
+  add(M.torus,side*.46,1.48,.015,.19,.035,.17,gold,0,0,0,[.11,.045,.008],.88);
+  add(M.smallSphere,side*.46,1.48,.224,.045,.045,.03,cloth2,0,0,0,[.23,.08,.01],.65);
+ }
+ // Crest finials and gemstone studs break up the simple cone crown silhouette.
+ add(M.torus,0,2.39,0,.275,.026,.275,[1,.83,.43],0,0,0,[.12,.045,.005],.96);
+ add(M.torus,0,2.61,0,.205,.022,.205,[1,.76,.31],0,0,0,[.1,.035,.003],.92);
+ for(let i=0;i<8;i++){
+  const a=i/8*TAU,px=Math.cos(a)*.205,pz=Math.sin(a)*.205;
+  add(M.cone,px,2.56,pz,.045,.18,.045,gold,0,-a,Math.cos(a)*.35,[.12,.035,.004],.9);
+  add(M.smallSphere,px*1.06,2.47,pz*1.06,.025,.032,.025,i%2?[.24,.82,1]:[1,.29,.23],0,0,0,[.24,.08,.02],.45);
+ }
+ // Gilded belt plate, hanging silk tabs and repeating waist gems.
+ add(M.box,0,.91,.292,.25,.13,.075,gold,0,0,0,[.12,.055,.006],.92);
+ add(M.smallSphere,0,.91,.342,.052,.058,.024,[1,.79,.33],0,0,0,[.32,.13,.02],.7);
+ for(let i=0;i<5;i++){
+  const x=(i-2)*.115;
+  add(M.box,x,.59,.238,.075,.46,.055,i%2?cloth2:cloth,0,0,(i-2)*-.035,[.025,.005,0],.45);
+  add(M.smallSphere,x,.35,.274,.025,.04,.022,gold,0,0,0,[.09,.035,.002],.8);
+ }
  add(M.box,-.18,.66,.19,.19,.43,.08,cloth2,0,0,-.12,[.015,0,0],.32);add(M.box,.18,.66,.19,.19,.43,.08,cloth2,0,0,.12,[.015,0,0],.32);add(M.sphere,0,1.43,.315,.07,.07,.04,[1,.84,.42],0,0,0,[.2,.09,.015],.92);add(M.sphere,0,2.155,.245,.027,.075,.02,[.92,.12,.13],0,0,0,[.35,.025,.015],.75);
  for(const side of [-1,1]){add(M.box,side*.115,2.13,.235,.085,.025,.024,[.23,.12,.08],0,0,side*-.08);add(M.torus,side*.28,1.99,.015,.075,.075,.035,gold,Math.PI/2,0,0,[.12,.05,.01],.78);}
  if(hero){
   if(f.type==='hanuman'){// Vanara muzzle, cheek fur, white crest and divine mace
-   add(M.sphere,0,1.99,.24,.17,.13,.16,[.95,.89,.77]);add(M.sphere,0,1.93,.30,.07,.05,.035,[.22,.12,.06]);add(M.sphere,0,2.26,-.02,.16,.18,.17,[.95,.92,.82]);part(root,M.bow,MAT(.28,.68,-.40,-Math.PI/2,0,.35,.34,.62,.34),[.91,.88,.78],[.015,.01,0],1,.35);
+   add(M.sphere,0,1.99,.24,.17,.13,.16,[.95,.89,.77]);add(M.sphere,0,1.93,.30,.07,.05,.035,[.22,.12,.06]);add(M.sphere,0,2.26,-.02,.16,.18,.17,[.95,.92,.82]);for(let side of [-1,1]){add(M.sphere,side*.18,2.16,.14,.095,.13,.10,[.94,.88,.75],0,0,side*.35);add(M.cone,side*.22,2.12,.23,.055,.16,.055,[.97,.91,.8],0,0,side*-.38);add(M.smallSphere,side*.10,2.03,.348,.024,.027,.015,[.08,.06,.045],0,0,0,[.09,.035,.01],.3);}part(root,M.bow,MAT(.28,.68,-.40,-Math.PI/2,0,.35,.34,.62,.34),[.91,.88,.78],[.015,.01,0],1,.35);
    add(M.cyl,.67,.78,.02,.055,1.2,.055,[.7,.38,.12],0,0,0,[.05,.02,0],.7);add(M.sphere,.67,1.43,.02,.22,.25,.22,gold,0,0,0,[.2,.07,.01],.9);add(M.cone,.67,1.62,.02,.17,.25,.17,[1,.76,.29],0,0,0,[.18,.07,0],.8);
   }else if(f.type==='rama'||f.type==='lakshmana'){// Bow and string, carried at the left of the body
    const broot=mul(root,MAT(-.63,1.28,.04,0,0,-.12,1,1,1));part(broot,M.bow,MAT(0,0,0,0,0,0,.61,.86,.48),gold,[.18,.08,.01],1,.95);part(broot,M.cyl,MAT(0,0,0,0,0,0,.018,1.18,.018),[.76,.83,.75],[.1,.1,.1],1,.6);part(broot,M.smallSphere,MAT(0,.62,0,0,0,0,.09,.09,.09),[.94,.77,.39],[.2,.08,0]);
-  }else if(f.type==='sita'){add(M.sphere,0,2.28,0,.32,.12,.30,cloth2);add(M.sphere,0,2.47,0,.30,.06,.27,gold,0,0,0,[.1,.05,.01]);add(M.torus,0,1.12,.32,.15,.06,.08,[1,.7,.34],0,0,0,[.15,.04,.01]);}
+  }else if(f.type==='sita'){
+    add(M.sphere,0,2.28,-.045,.32,.16,.29,[.13,.075,.055],0,0,0,[.012,.004,0],.3);
+    add(M.sphere,-.235,2.13,-.025,.105,.30,.12,[.12,.065,.05],0,0,-.08);
+    add(M.sphere,.235,2.13,-.025,.105,.30,.12,[.12,.065,.05],0,0,.08);
+    add(M.box,-.29,.92,-.05,.12,.88,.13,[.15,.07,.07],0,0,-.16);
+    add(M.box,.29,.92,-.05,.12,.88,.13,[.15,.07,.07],0,0,.16);
+    add(M.box,0,1.19,.29,.15,.54,.08,[.97,.64,.69],0,0,-.22,[.06,.02,.025],.58);
+    add(M.box,.11,.92,.29,.10,.43,.075,[1,.79,.52],0,0,.22,[.1,.04,.012],.82);
+    add(M.sphere,0,2.28,.02,.32,.12,.30,cloth2,0,0,0,[.045,.01,.02],.55);
+    add(M.torus,0,2.32,.015,.29,.025,.29,gold,0,0,0,[.12,.05,.008],.9);
+    add(M.sphere,0,2.47,0,.30,.06,.27,gold,0,0,0,[.1,.05,.01],.85);
+    for(let i=-2;i<=2;i++){add(M.smallSphere,i*.095,2.46,.248,.027,.035,.018,i%2?[1,.44,.68]:[.34,.83,1],0,0,0,[.25,.1,.025],.55);}
+    add(M.torus,0,1.12,.32,.15,.06,.08,[1,.7,.34],0,0,0,[.15,.04,.01]);
+    add(M.sphere,0,.73,.29,.12,.15,.05,[1,.56,.69],0,0,0,[.12,.035,.025],.55);
+    for(let i=0;i<5;i++){const a=i/5*TAU;add(M.smallSphere,Math.cos(a)*.16,1.00+Math.sin(a)*.08,.32,.035,.045,.022,[1,.75,.37],0,0,0,[.2,.08,.01],.8);}
+   }
  }else{
   // Rakshasa: wide pauldrons, horned crest, crimson eye glow, claw tips and weapon.
   add(M.sphere,0,1.99,.22,.29,.28,.15,skin,0,0,0,[.08,.015,0],.45);add(M.sphere,-.12,2.08,.34,.045,.035,.025,[1,.06,.025],0,0,0,[.45,.01,0]);add(M.sphere,.12,2.08,.34,.045,.035,.025,[1,.06,.025],0,0,0,[.45,.01,0]);
@@ -418,9 +478,9 @@ function renderScene(now){calls=(mode==='battle'||mode==='pause'||mode==='levelu
    RXfx();
    for(const f of floaters){/* world damage numbers have a lightweight spark marker; readable counts remain in HUD */call(M.smallSphere,Xf(f.x,f.y,f.z,0,0,0,.08,.08,.08),f.color==='#ffda82'?[1,.68,.18]:[.3,1,.7],[.2,.1,0],.85,.2);}
   }
-  const tg0=[player?.x||0,.4,player?.z||0];if(!ENX.ct)ENX.ct=tg0.slice();for(let i=0;i<3;i++)ENX.ct[i]+=(tg0[i]-ENX.ct[i])*.14;const sk=camShake;camShake*=.88;const target=[ENX.ct[0],1.0,ENX.ct[2]];camPos=[target[0]+6.3+(Math.random()-.5)*sk,7.6+(Math.random()-.5)*sk*.6,target[2]+9.6+(Math.random()-.5)*sk];view=lookAt(camPos,target,[0,1,0]);
+  const tg0=[player?.x||0,.4,player?.z||0];if(!ENX.ct)ENX.ct=tg0.slice();for(let i=0;i<3;i++)ENX.ct[i]+=(tg0[i]-ENX.ct[i])*.14;const sk=camShake;camShake*=.88;const target=[ENX.ct[0],1.0,ENX.ct[2]];const bossZoom=bossEnemy?.health>0?.88:1.0;camPos=[target[0]+6.3*bossZoom+Math.sin(t*.13)*.32+(Math.random()-.5)*sk,7.6*bossZoom+(Math.random()-.5)*sk*.6,target[2]+9.6*bossZoom+Math.cos(t*.11)*.22+(Math.random()-.5)*sk];view=lookAt(camPos,target,[0,1,0]);
  }else{
-  heroPreviewClock+=.016;if(mode==='heroes'){const h=HEROES[selectedHero]||HEROES.rama;addCharacterPreview(h.id,t);}camPos=[3.6,3.3,9.2];view=lookAt(camPos,[-1.9,1.55,0],[0,1,0]);
+  heroPreviewClock+=.016;if(mode==='heroes'){const h=HEROES[selectedHero]||HEROES.rama;addCharacterPreview(h.id,t);}camPos=[3.6+Math.sin(t*.20)*.28,3.3+Math.sin(t*.31)*.06,9.2+Math.cos(t*.17)*.24];view=lookAt(camPos,[-1.9,1.55,0],[0,1,0]);
  }
  vp=mul(proj,view);RXdraw();
 }
