@@ -99,9 +99,9 @@ function buildStageEnvironment(idx){staticCalls.length=0;const st=STAGES[idx],fl
  if(idx===0){
   for(const side of [-1,1])for(let z=-6;z<=10;z+=8){guardian(side*8.6,z,1.12,[.31,.51,.34]);groundObj(M.torus,side*8.6,.11,z,1.0,.12,1.0,[.21,.56,.31],0,[.03,.08,.025],.4);}
  }else if(idx===1){
-  for(const side of [-1,1])for(let z=-8;z<=8;z+=8){guardian(side*2.85,z,.9,[.42,.51,.57]);groundObj(M.ring,side*3.7,.20,z,.35,.3,.35,[.24,.72,.95],0,[.06,.28,.6],.8);}
+  for(const side of [-1,1])for(let z=-8;z<=8;z+=8){guardian(side*4.35,z,.9,[.42,.51,.57]);groundObj(M.ring,side*4.85,.20,z,.35,.3,.35,[.24,.72,.95],0,[.06,.28,.6],.8);}
  }else if(idx===2){
-  for(const side of [-1,1])for(let z=-8;z<=8;z+=8){guardian(side*3.25,z,.92,[.59,.49,.32]);groundObj(M.box,side*3.8,.25,z,.18,.45,1.4,[.83,.64,.32],0,[.07,.025,.003],.8);}
+  for(const side of [-1,1])for(let z=-8;z<=8;z+=8){guardian(side*4.45,z,.92,[.59,.49,.32]);groundObj(M.box,side*5.05,.25,z,.18,.45,1.4,[.83,.64,.32],0,[.07,.025,.003],.8);}
  }else{
   for(const side of [-1,1]){banner(side*10.7,-7,4.0,idx===4?[.42,.04,.10]:[.62,.10,.07]);banner(side*10.7,1,3.6,idx===4?[.53,.05,.08]:[.78,.17,.07]);brazier(side*7.0,-6);brazier(side*7.0,6);guardian(side*9.5,0,1.1,[.39,.16,.14]);}
   for(let z=-10;z<=10;z+=10)groundObj(M.torus,0,.10,z,2.0,.14,2.0,[.85,.44,.19],0,[.08,.02,.006],.8);
