@@ -294,7 +294,7 @@ function updateSkillHud(){document.querySelectorAll('.skill[data-skill]').forEac
 function spawnWaveCheck(){if(waveSpawnRemaining>0){spawnClock-=dt; if(spawnClock<=0&&enemies.length<14){spawnEnemy(wave%5===0&&enemies.length===0);waveSpawnRemaining--;spawnClock=Math.max(.44,1.15-wave*.035);}}else if(enemies.length===0){if(wave<20){wave++;spawnWave();}else finishStage();}}
 function finishStage(){mode='endScreen';const win=true;bestKills=Math.max(bestKills,kills);totalGems+=gems+stageReward;if(stageLive+2>unlocked)unlocked=Math.min(STAGES.length,stageLive+2);persist();$('endEyebrow').textContent='CHAPTER '+String(stageLive+1).padStart(2,'0')+' • COMPLETE';$('endTitle').textContent='VICTORY';$('endDesc').textContent=`${HEROES[selectedHero].name} has broken the enemy line at ${STAGES[stageLive].name}. The legend continues.`;$('endKills').textContent=kills+' FOES DEFEATED';$('endReward').textContent='+'+(gems+stageReward)+' GEMS';$('endNext').textContent=stageLive<STAGES.length-1?'NEXT CHAPTER →':'RETURN TO LEGEND';$('endNext').style.display='';$('endHome').textContent='MAIN MENU';switchScreen('endScreen');setMusic('menu');sfx('victory');}
 function finishDefeat(){bestKills=Math.max(bestKills,kills);totalGems+=gems;persist();$('endEyebrow').textContent='YOUR LEGEND IS NOT OVER';$('endTitle').textContent='FALLEN IN BATTLE';$('endDesc').textContent=`You defeated ${kills} foes. Recover your strength and return to ${STAGES[stageLive].name}.`; $('endKills').textContent=kills+' FOES DEFEATED';$('endReward').textContent='+'+gems+' GEMS';$('endNext').textContent='RETRY CHAPTER';$('endNext').style.display='';switchScreen('endScreen');setMusic('menu');}
-function updateEnemies(dt){for(const e of [...enemies]){const dx=player.x-e.x,dz=player.z-e.z,d=Math.hypot(dx,dz)||.001;const sx=dx/d,sz=dz/d;e.angle=Math.atan2(sx,sz);if(d>1.55){e.vx=sx*e.speed;e.vz=sz*e.speed;e.x+=e.vx*dt;e.z+=e.vz*dt;}else{e.vx=0;e.vz=0;e.attack-=dt;if(e.attack<=0){e.attack=e.boss?.85:1.2;if(invuln<=0){const dodge=Math.random()<(selectedHero==='lakshmana'?.18:.08);if(!dodge){player.health-=e.damage;invuln=.6;addRing(player.x,player.z,[.95,.18,.12],.1,1.5,.28);sfx('hit');if(player.health<=0){player.health=0;updateHUD();finishDefeat();return;}}else showToast('DODGE!');}}}e.hitFlash=Math.max(0,e.hitFlash-dt);}}
+function updateEnemies(dt){for(const e of [...enemies]){const dx=player.x-e.x,dz=player.z-e.z,d=Math.hypot(dx,dz)||.001;const sx=dx/d,sz=dz/d;e.angle=Math.atan2(sx,sz);if(d>1.55){e.vx=sx*e.speed;e.vz=sz*e.speed;e.x+=e.vx*dt;e.z+=e.vz*dt;}else{e.vx=0;e.vz=0;e.attack-=dt;if(e.attack<=0){e.attack=e.boss?.85:1.2;if(e.boss){camShake=Math.max(camShake,.62);addRing(e.x,e.z,[1,.12,.065],.18,4.8,.58);addRing(e.x,e.z,[1,.62,.18],.08,2.9,.42);for(let i=0;i<9;i++){const a=i/9*TAU;fx.push({x:e.x+Math.cos(a)*2.1,z:e.z+Math.sin(a)*2.1,y:.08,life:.52,maxLife:.52,size:.12,maxSize:1.0,color:i%2?[1,.18,.07]:[1,.67,.2],kind:'ring'});}for(let i=0;i<12;i++)spawnBurst(e.x,e.z,choose([[1,.18,.06],[1,.55,.16],[.42,.13,.09]]),.52,rand(1.5,4.2));}if(invuln<=0){const dodge=Math.random()<(selectedHero==='lakshmana'?.18:.08);if(!dodge){player.health-=e.damage;invuln=.6;addRing(player.x,player.z,[.95,.18,.12],.1,1.5,.28);sfx('hit');if(player.health<=0){player.health=0;updateHUD();finishDefeat();return;}}else showToast('DODGE!');}}}e.hitFlash=Math.max(0,e.hitFlash-dt);}}
 function updateProjectiles(dt){for(const p of [...projectiles]){if(p.target&&enemies.includes(p.target)&&p.target.health>0){const tx=p.target.x-p.x,tz=p.target.z-p.z,tl=Math.hypot(tx,tz)||1;const ndx=tx/tl,ndz=tz/tl;p.dx+= (ndx-p.dx)*.17;p.dz+=(ndz-p.dz)*.17;const nl=Math.hypot(p.dx,p.dz)||1;p.dx/=nl;p.dz/=nl;}p.x+=p.dx*p.speed*dt;p.z+=p.dz*p.speed*dt;p.y+=Math.sin((p.life||0)*9)*.04;p.life-=dt;if(Math.random()<.20)spawnBurst(p.x,p.z,p.color,.4,rand(.3,1.1));let hit=null;for(const e of enemies){if(Math.hypot(e.x-p.x,e.z-p.z)<(e.boss?1.15:.68)){hit=e;break;}}if(hit){damageEnemy(hit,p.damage);p.hit=true;p.life=-1;}if(p.life<=0)projectiles=projectiles.filter(x=>x!==p);}}
 function updateFX(dt){fx=fx.filter(p=>p.life>0);for(const p of fx){p.life-=dt;if(p.kind==='spark'){p.x+=p.vx*dt;p.z+=p.vz*dt;p.y+=p.vy*dt;p.vy-=3.8*dt;} }floaters=floaters.filter(f=>f.life>0);for(const f of floaters){f.life-=dt;f.y+=dt*1.15;}}
 let dt=0;
@@ -353,7 +353,7 @@ const RXQ=`#version 300 es
 out vec2 vUV;void main(){vec2 p=vec2(float((gl_VertexID<<1)&2),float(gl_VertexID&2));vUV=p;gl_Position=vec4(p*2.0-1.0,0.0,1.0);}`;
 const RXB=`#version 300 es
 precision highp float;in vec2 vUV;uniform sampler2D uTex;out vec4 o;
-void main(){vec3 c=texture(uTex,vUV).rgb;float l=max(c.r,max(c.g,c.b));o=vec4(c*smoothstep(0.85,1.8,l),1.0);}`;
+void main(){vec3 c=texture(uTex,vUV).rgb;float l=max(c.r,max(c.g,c.b));o=vec4(c*smoothstep(0.72,1.7,l),1.0);}`;
 const RXG=`#version 300 es
 precision highp float;in vec2 vUV;uniform sampler2D uTex;uniform vec2 uDir;out vec4 o;
 void main(){vec3 s=texture(uTex,vUV).rgb*0.227027027;s+=(texture(uTex,vUV+uDir*1.3846153846).rgb+texture(uTex,vUV-uDir*1.3846153846).rgb)*0.3162162162;s+=(texture(uTex,vUV+uDir*3.2307692308).rgb+texture(uTex,vUV-uDir*3.2307692308).rgb)*0.0702702703;o=vec4(s,1.0);}`;
@@ -362,7 +362,7 @@ precision highp float;in vec2 vUV;uniform sampler2D uTex;out vec4 o;void main(){
 const RXK=`#version 300 es
 precision highp float;in vec2 vUV;uniform sampler2D uScene;uniform sampler2D uBloom;uniform sampler2D uBloom2;out vec4 o;
 vec3 aces(vec3 x){return clamp((x*(2.51*x+0.03))/(x*(2.43*x+0.59)+0.14),0.0,1.0);}
-void main(){vec4 s=texture(uScene,vUV);vec3 b=texture(uBloom,vUV).rgb*0.55+texture(uBloom2,vUV).rgb*0.95;
+void main(){vec4 s=texture(uScene,vUV);vec3 b=texture(uBloom,vUV).rgb*0.62+texture(uBloom2,vUV).rgb*1.05;
  vec3 c=aces((s.rgb+b)*0.92);c=pow(c,vec3(1.1))*vec3(1.05,1.0,0.93);float l=dot(c,vec3(0.299,0.587,0.114));c=mix(vec3(l),c,1.2);
  float vg=1.0-0.4*pow(length((vUV-0.5)*vec2(1.1,1.25))*1.25,2.4);c*=vg;
  float a=max(s.a,max(c.r,max(c.g,c.b)));o=vec4(c,clamp(a,0.0,1.0));}`;
@@ -424,7 +424,7 @@ function RXfx(){for(const p of fx){const k=clamp(p.life/p.maxLife,0,1),c=p.color
 function RXproj(){for(const p of projectiles){const a=Math.atan2(p.dx,p.dz),c=p.color,b=p.type==='bolt',len=b?2.8:.95,w=p.r*(b?1.15:1.3),sx=Math.sin(a),sz=Math.cos(a),bx=p.x-sx*len*.45,bz=p.z-sz*len*.45;
  call(M.cyl,Xf(bx,p.y,bz,Math.PI/2,a,0,w*.55,len,w*.55),[1,1,1],[2.6,2.4,1.9],1,.9);call(M.cyl,Xf(bx,p.y,bz,Math.PI/2,a,0,w*1.9,len*1.1,w*1.9),c,c.map(v=>v*2.4),.3,.2);call(M.sphere,Xf(p.x,p.y,p.z,0,0,0,w*3.6,w*3.6,w*3.6),c,c.map(v=>v*3),.4,.2);
  if(b)for(let i=1;i<7;i++){const q=w*(6.2-i*.7);call(M.ringFX,Xf(p.x-sx*i*.5,p.y,p.z-sz*i*.5,Math.PI/2,a,0,q,1,q),c,c.map(v=>v*2.5),.55*(1-i/7),.3)}}}
-function RXhero(t){const g=(HEROES[selectedHero]||HEROES.rama).gold,x=player.x,z=player.z;call(M.ringFX,Xf(x,.075,z,0,t*.7,0,1.25,1,1.25),g,g.map(v=>v*1.6),.8,.4);call(M.ringFX,Xf(x,.08,z,0,-t*1.1,0,.9,1,.9),[1,1,1],[1.2,1.1,.9],.5,.3);call(M.sphere,Xf(x,1.3,z,0,0,0,1.5,1.8,1.5),g,g.map(v=>v*.4),.05,.1)}
+function RXhero(t){const id=selectedHero,palette={rama:{core:[1,.72,.24],edge:[.28,.76,1]},sita:{core:[1,.42,.68],edge:[.58,.83,1]},hanuman:{core:[1,.68,.24],edge:[.31,.86,1]},lakshmana:{core:[.28,1,.62],edge:[.3,.53,1]},ravana:{core:[1,.2,.1],edge:[.74,.04,.13]}};const p=palette[id]||palette.rama,g=p.core,edge=p.edge,x=player.x,z=player.z;call(M.ringFX,Xf(x,.075,z,0,t*.7,0,1.25,1,1.25),g,g.map(v=>v*1.8),.8,.4);call(M.ringFX,Xf(x,.08,z,0,-t*1.1,0,.9,1,.9),edge,edge.map(v=>v*1.7),.48,.3);call(M.ringFX,Xf(x,1.62,z,Math.PI/2,t*.32,0,.86,1,.86),edge,edge.map(v=>v*.65),.25,.22);call(M.ringFX,Xf(x,1.62,z,Math.PI/2,-t*.43,0,.66,1,.66),g,g.map(v=>v*.8),.18,.3);call(M.sphere,Xf(x,1.3,z,0,0,0,1.5,1.8,1.5),g,g.map(v=>v*.4),.05,.1)}
 function RXboss(e,t){call(M.ringFX,Xf(e.x,.07,e.z,0,t,0,2.4,1,2.4),[1,.25,.1],[3,.5,.15],.7,.4);call(M.ringFX,Xf(e.x,.09,e.z,0,-t*1.3,0,1.7,1,1.7),[1,.7,.3],[2.5,1.4,.4],.5,.3)}
 function RXskill(n,ox,oz,tx=player?.x??ox,tz=player?.z??oz){
  const type=selectedHero||'rama';
@@ -481,6 +481,17 @@ function renderScene(now){calls=(mode==='battle'||mode==='pause'||mode==='levelu
   const tg0=[player?.x||0,.4,player?.z||0];if(!ENX.ct)ENX.ct=tg0.slice();for(let i=0;i<3;i++)ENX.ct[i]+=(tg0[i]-ENX.ct[i])*.14;const sk=camShake;camShake*=.88;const target=[ENX.ct[0],1.0,ENX.ct[2]];const bossZoom=bossEnemy?.health>0?.88:1.0;camPos=[target[0]+6.3*bossZoom+Math.sin(t*.13)*.32+(Math.random()-.5)*sk,7.6*bossZoom+(Math.random()-.5)*sk*.6,target[2]+9.6*bossZoom+Math.cos(t*.11)*.22+(Math.random()-.5)*sk];view=lookAt(camPos,target,[0,1,0]);
  }else{
   heroPreviewClock+=.016;if(mode==='heroes'){const h=HEROES[selectedHero]||HEROES.rama;addCharacterPreview(h.id,t);}camPos=[3.6+Math.sin(t*.20)*.28,3.3+Math.sin(t*.31)*.06,9.2+Math.cos(t*.17)*.24];view=lookAt(camPos,[-1.9,1.55,0],[0,1,0]);
+ }
+ if(mode==='battle'||mode==='pause'||mode==='levelup'||mode==='endScreen'){
+  const stage=stageLive,dust=stage===0?[.28,.86,.44]:stage===1?[.22,.74,1]:stage===2?[1,.75,.32]:stage===3?[1,.28,.11]:[1,.24,.25];
+  const warm=stage>=3?[1,.53,.18]:stage===2?[.96,.78,.42]:[.58,.82,1];
+  for(let i=0;i<22;i++){
+   const phase=t*(.22+(i%4)*.035)+i*2.399;
+   const px=Math.sin(phase*1.13+i*.17)*(5.4+(i%4)*2.1);
+   const pz=-9+((i*1.73+t*(.25+(i%3)*.08))%18);
+   const py=.45+(Math.sin(t*.58+i*1.91)+1)*.82,size=.035+(i%3)*.012,c=i%4===0?warm:dust;
+   call(M.smallSphere,Xf(px,py,pz,0,0,0,size,size,size),c,c.map(v=>v*1.65),.28,.15);
+  }
  }
  vp=mul(proj,view);RXdraw();
 }
