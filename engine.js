@@ -9,6 +9,7 @@ const ART = (window.ROR_ASSETS && ROR_ASSETS.art) || {};
 const MUSIC = (window.ROR_ASSETS && ROR_ASSETS.music) || {};
 const art = key => ART[key] || ART.forest || '';
 let mode='home', runMode='story', selectedMode='story', selectedStage=0, selectedHero='rama', stageLive=0, soundOn=true, musicOn=true, audioUnlocked=false, heroEntry='home';
+let heroPreviewRotation=0;
 let unlocked=1, totalGems=0, bestKills=0, bestSurvivalWave=0, bestBossRush=0, quality='high';
 const permanent={health:0,damage:0,speed:0,fortune:0};
 try { const save=JSON.parse(localStorage.getItem('ror3d_epic_save')||'{}'); unlocked=save.unlocked||1;totalGems=save.gems||0;bestKills=save.kills||0;bestSurvivalWave=save.survivalWave||0;bestBossRush=save.bossRush||0;selectedHero=save.hero||'rama';Object.assign(permanent,save.upgrades||{}); } catch(e) {}
@@ -198,6 +199,21 @@ function fighterDraw(f,t,hero=false,boss=false){const cfg=hero?HEROES[f.type]||H
    add(M.cyl,.67,.78,.02,.055,1.2,.055,[.7,.38,.12],0,0,0,[.05,.02,0],.7);add(M.torus,.67,1.23,.02,.13,.035,.13,gold,0,0,0,[.12,.04,.005],.9);add(M.sphere,.67,1.43,.02,.22,.25,.22,gold,0,0,0,[.2,.07,.01],.9);add(M.torus,.67,1.43,.02,.22,.035,.22,gold,0,0,0,[.14,.055,.008],.92);for(let i=0;i<8;i++){const a=i/8*TAU;add(M.cone,.67+Math.cos(a)*.19,1.43+Math.sin(a)*.19,.02,.045,.16,.045,gold,0,-a,Math.cos(a)*.55,[.15,.05,.005],.9);}add(M.cone,.67,1.62,.02,.17,.25,.17,[1,.76,.29],0,0,0,[.18,.07,0],.8);
   }else if(f.type==='rama'||f.type==='lakshmana'){// Bow and string, carried at the left of the body
    const broot=mul(root,MAT(-.63,1.28,.04,0,0,-.12,1,1,1));part(broot,M.bow,MAT(0,0,0,0,0,0,.61,.86,.48),gold,[.18,.08,.01],1,.95);part(broot,M.cyl,MAT(0,0,0,0,0,0,.018,1.18,.018),[.76,.83,.75],[.1,.1,.1],1,.6);part(broot,M.smallSphere,MAT(0,.62,0,0,0,0,.09,.09,.09),[.94,.77,.39],[.2,.08,0]);for(let i=0;i<5;i++){const yy=-.43+i*.21;add(M.smallSphere,-.63,1.28+yy,.17,.035,.035,.022,i%2?cloth2:[1,.82,.35],0,0,0,[.12,.045,.005],.82);}
+   if(f.type==='rama'){
+    // Distinctive royal quiver and feathered arrows for Rama's celestial-archer silhouette.
+    add(M.cyl,.32,1.82,-.31,.10,.46,.10,[.28,.13,.07],0,0,-.16,[.03,.01,0],.58);
+    add(M.torus,.32,2.04,-.31,.11,.025,.11,gold,0,0,0,[.12,.04,.005],.88);
+    for(let i=0;i<5;i++){
+     const ax=.32+(i-2)*.03, tilt=(i-2)*.015;
+     add(M.cyl,ax,2.22,-.31,.012,.46,.012,[.55,.36,.16],0,0,tilt,[.04,.01,0],.6);
+     add(M.cone,ax,2.46,-.31,.023,.095,.023,[.97,.83,.53],0,0,tilt,[.13,.06,.015],.82);
+     add(M.box,ax,2.03,-.31,.038,.075,.012,i%2?[.55,.16,.18]:[.12,.33,.55],0,0,tilt*4,[.03,.01,0],.4);
+    }
+    // Fine gold edging and a jewel clasp reinforce the blue-and-gold Thai royal attire.
+    add(M.box,-.18,.66,.265,.022,.34,.025,gold,0,0,-.12,[.07,.03,.005],.8);
+    add(M.box,.18,.66,.265,.022,.34,.025,gold,0,0,.12,[.07,.03,.005],.8);
+    add(M.smallSphere,0,1.40,.348,.06,.07,.035,[.18,.70,.92],0,0,0,[.12,.30,.45],.62);
+   }
   }else if(f.type==='sita'){
     add(M.sphere,0,2.28,-.045,.32,.16,.29,[.13,.075,.055],0,0,0,[.012,.004,0],.3);
     add(M.sphere,-.235,2.13,-.025,.105,.30,.12,[.12,.065,.05],0,0,-.08);
@@ -257,7 +273,36 @@ function buildChapterCards(){const grid=$('chapterCards');grid.innerHTML='';for(
  const mini=$('homeMini');mini.innerHTML='';for(const st of STAGES){const d=document.createElement('div');d.className='miniTile'+(st.id===selectedStage?' selected':'');d.style.backgroundImage=`url("${art(st.art)}")`;mini.appendChild(d);}}
 function updateChapterInfo(){const st=STAGES[selectedStage];$('chapterNum').textContent=st.eyebrow;$('chapterTitle').innerHTML=st.name.toUpperCase().replace(' ','<br>');$('chapterThai').textContent=st.thai;$('chapterDesc').textContent=st.desc;$('chapterDiff').textContent=st.diff;$('chapterEnemies').textContent=st.enemy.toUpperCase();$('chapterReward').textContent=`REWARD · ${st.reward} GEMS`;$('chapterUnlocked').textContent=st.id+1<=unlocked?'UNLOCKED':'LOCKED';$('chapterStart').textContent=st.id+1>unlocked?'CHAPTER LOCKED':'ENTER CHAPTER →';$('chapterStart').disabled=st.id+1>unlocked;$('chapterStart').style.opacity=st.id+1>unlocked?'.5':'1';buildChapterCards();}
 function updateHeroCards(){const host=$('heroCards');host.innerHTML='';for(const h of Object.values(HEROES)){const card=document.createElement('button');card.className='heroCard'+(selectedHero===h.id?' selected':'')+(h.boss?' boss':'');card.innerHTML=`<div class="avatar"><img src="${art(h.portrait)}" alt="" loading="lazy" decoding="async"><span aria-hidden="true"></span></div><h3>${h.name.toUpperCase()}</h3><div class="ht">${h.title}</div><div class="bio">${h.boss?'FINAL ENEMY':h.style.split('•')[0]}</div>`;card.addEventListener('click',()=>{if(h.boss){showToast('Tosakanth is the final chapter boss.');sfx('click');return;}selectedHero=h.id;updateHeroInfo();updateHeroCards();sfx('click');});host.appendChild(card);}updateHeroInfo();}
-function updateHeroInfo(){const h=HEROES[selectedHero]||HEROES.rama;$('heroName').textContent=h.name.toUpperCase();$('heroBio').textContent=h.bio;$('previewHeroName').textContent=h.name.toUpperCase();$('previewHeroDesc').textContent=h.title.toUpperCase();$('heroStats').textContent=h.style;$('heroPreview').style.setProperty('--art',`url("${art(h.previewArt||h.portrait)}")`);$('heroPortrait').src=art(h.portrait);$('hudIcon').textContent=h.sigil;}
+function updateHeroInfo(){const h=HEROES[selectedHero]||HEROES.rama;$('heroName').textContent=h.name.toUpperCase();$('heroBio').textContent=h.bio;$('previewHeroName').textContent=h.name.toUpperCase();$('previewHeroDesc').textContent=h.title.toUpperCase();$('heroStats').textContent=h.style;$('heroPreview').style.setProperty('--art',`url("${art(h.previewArt||h.portrait)}")`);$('hudIcon').textContent=h.sigil;}
+
+const previewViewportEl=$('heroPreview');
+let heroPointerState=null;
+previewViewportEl.addEventListener('pointerdown',event=>{
+ if(mode!=='heroes'||(event.target.closest&&event.target.closest('button')))return;
+ heroPointerState={id:event.pointerId,x:event.clientX};
+ previewViewportEl.classList.add('is-dragging');
+ try{previewViewportEl.setPointerCapture(event.pointerId);}catch(e){}
+});
+previewViewportEl.addEventListener('pointermove',event=>{
+ if(!heroPointerState||event.pointerId!==heroPointerState.id)return;
+ heroPreviewRotation+=(event.clientX-heroPointerState.x)*.012;
+ heroPointerState.x=event.clientX;
+});
+function stopHeroPreviewDrag(event){
+ if(!heroPointerState||event.pointerId!==heroPointerState.id)return;
+ heroPointerState=null;
+ previewViewportEl.classList.remove('is-dragging');
+ try{if(previewViewportEl.hasPointerCapture(event.pointerId))previewViewportEl.releasePointerCapture(event.pointerId);}catch(e){}
+}
+previewViewportEl.addEventListener('pointerup',stopHeroPreviewDrag);
+previewViewportEl.addEventListener('pointercancel',stopHeroPreviewDrag);
+previewViewportEl.addEventListener('lostpointercapture',stopHeroPreviewDrag);
+previewViewportEl.addEventListener('keydown',event=>{
+ if(mode!=='heroes')return;
+ if(event.key==='ArrowLeft')heroPreviewRotation-=.16;
+ if(event.key==='ArrowRight')heroPreviewRotation+=.16;
+});
+
 function updateModePanel(){const meta={story:['STORY CAMPAIGN','Begin at chapter one or continue from your latest unlocked stage.','CHOOSE A CHAPTER →'],survival:['ENDLESS SURVIVAL',`Personal record: wave ${bestSurvivalWave}. The arena grows more dangerous every wave.`,'CHOOSE A WARRIOR →'],bossrush:['BOSS RUSH',`Personal record: ${bestBossRush}/5 rounds. Every round brings a boss and a larger guard detail.`,'CHOOSE A WARRIOR →']}[selectedMode]||['STORY CAMPAIGN','Begin the legend.','CONTINUE →'];$('modeTitle').textContent=meta[0];$('modeDesc').textContent=meta[1];$('modeContinue').textContent=meta[2];}
 function chooseMode(next){if(!['story','survival','bossrush'].includes(next))return;selectedMode=next;document.querySelectorAll('[data-mode-select]').forEach(b=>{const selected=b.dataset.modeSelect===next;b.classList.toggle('selected',selected);b.setAttribute('aria-pressed',String(selected));});updateModePanel();sfx('click');}
 function beginSelectedMode(){runMode=selectedMode;if(runMode==='story'){enterChapters();return;}selectedStage=clamp(selectedStage,0,unlocked-1);enterHeroes('quickStart');}
@@ -489,7 +534,7 @@ RXinit();
 function resize(){DPR=Math.min(quality==='low'?1:quality==='medium'?1.5:2,window.devicePixelRatio||1);W=window.innerWidth;H=window.innerHeight;canvas.width=Math.floor(W*DPR);canvas.height=Math.floor(H*DPR);canvas.style.width=W+'px';canvas.style.height=H+'px';gl.viewport(0,0,canvas.width,canvas.height);RXsize();proj=perspective(Math.PI/3.15,canvas.width/canvas.height,.1,100);}
 window.addEventListener('resize',resize);resize();
 function renderCall(c){const mvp=mul(vp,c.model);gl.uniformMatrix4fv(loc.mvp,false,mvp);gl.uniformMatrix4fv(loc.model,false,c.model);gl.uniform3fv(loc.color,c.color);gl.uniform3fv(loc.emissive,c.emissive||[0,0,0]);gl.uniform1f(loc.alpha,c.alpha??1);gl.uniform1f(loc.gloss,c.gloss??.5);gl.bindVertexArray(c.mesh.vao);gl.drawElements(gl.TRIANGLES,c.mesh.count,gl.UNSIGNED_SHORT,0);}
-function addCharacterPreview(type,t){const f={x:2.45,z:1,angle:0,type,scale:1.0,seed:0};fighterDraw(f,t,true,false);}
+function addCharacterPreview(type,t){const f={x:2.45,z:1,angle:heroPreviewRotation+Math.sin(t*.24)*.065,type,scale:1.22,seed:0};fighterDraw(f,t,true,false);}
 function projectDamageTexts(){const m=vp;for(const f of floaters){if(!f.el)continue;const x=m[0]*f.x+m[4]*f.y+m[8]*f.z+m[12],y=m[1]*f.x+m[5]*f.y+m[9]*f.z+m[13],w=m[3]*f.x+m[7]*f.y+m[11]*f.z+m[15];if(w<=0){f.el.style.display='none';continue;}f.el.style.display='block';f.el.style.left=((x/w*.5+.5)*W)+'px';f.el.style.top=((1-(y/w*.5+.5))*H)+'px';}}
 function renderScene(now){calls=(mode==='battle'||mode==='pause'||mode==='levelup'||mode==='endScreen')?staticCalls.slice():[];transparentCalls=[];const t=now*.001;
  if(mode==='battle'||mode==='pause'||mode==='levelup'||mode==='endScreen'){
