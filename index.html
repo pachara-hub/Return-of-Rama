@@ -94,6 +94,34 @@
 .heroPreview .previewText h2{font-size:clamp(22px,2.6vw,36px)}
 .heroPreview .previewText p{max-width:22ch;line-height:1.5;color:#dfd4ba}
 @media(max-width:950px){.heroPortrait{height:65%;max-width:52%}}
+
+/* Interactive, real-time 3D champion showcase */
+.heroLayout{grid-template-columns:minmax(300px,.91fr) minmax(340px,1.09fr);gap:16px}
+.heroPreview{isolation:isolate;cursor:grab;touch-action:pan-y;background:radial-gradient(ellipse at 50% 49%,rgba(230,175,72,.16),transparent 51%),linear-gradient(180deg,rgba(5,18,31,.18),rgba(4,10,19,.56));border-color:#e5bb6b99;box-shadow:inset 0 0 0 1px #ffffff08,0 18px 48px #0006}
+.heroPreview:before{opacity:.09;pointer-events:none}
+.heroPreview:after{content:"";position:absolute;inset:9px;border:1px solid #e2b46035;pointer-events:none;z-index:1}
+.heroPreview.is-dragging{cursor:grabbing}
+.heroPreview .previewText{z-index:4;pointer-events:none;padding-bottom:9px;background:linear-gradient(180deg,rgba(4,13,24,.68),rgba(4,13,24,0))}
+.heroPreview .previewContinue{z-index:4}
+.heroPreview .previewAura{z-index:2;opacity:.5}
+.previewModelHint{position:absolute;top:105px;left:50%;transform:translateX(-50%);z-index:4;display:flex;align-items:center;flex-direction:column;gap:4px;padding:7px 12px;border:1px solid #dcb56766;background:#071321bb;box-shadow:0 5px 18px #0006;color:#f3d69a;white-space:nowrap;pointer-events:none;font:600 9px/1.3 Cinzel,Georgia,serif;letter-spacing:.16em}
+.previewModelHint .rotateGlyph{font:24px/1 Georgia,serif;color:#ffdf97;text-shadow:0 0 14px #f3c66a66}
+.previewModelHint .modelHintSub{font:500 8px/1.3 Kanit,sans-serif;color:#9dc3d2;letter-spacing:.13em}
+#heroPreview:focus-visible{outline:2px solid #ffda87;outline-offset:3px}
+@media(max-width:900px){
+ .heroLayout{grid-template-columns:minmax(0,1fr);height:auto;min-height:calc(100% - 66px)}
+ .heroPreview{min-height:64vh}
+ .previewModelHint{top:88px}
+}
+@media(max-width:620px){
+ .heroLayout{display:flex;flex-direction:column;gap:14px}
+ .heroCards{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .heroCard .avatar{height:112px}
+ .heroExplain{padding:13px;align-items:flex-start;flex-direction:column}
+ .heroPreview{min-height:64vh}
+ .previewModelHint{top:86px}
+}
+
 </style>
 </head>
 <body>
@@ -121,7 +149,7 @@
 </section>
 <section id="heroes" class="screen" aria-label="Warrior selection">
  <div class="screenHeading"><div><div class="eyebrow">CHOOSE YOUR DESTINY</div><h1 class="headTitle">THE WARRIORS</h1></div><button class="ghostbtn" data-home>← &nbsp; MAIN MENU</button></div>
- <div class="heroLayout"><div class="rosterSide"><div class="eyebrow">CHAMPIONS OF THE RAMAKIEN</div><div class="heroCards" id="heroCards"></div><div class="heroExplain frame"><div><h2 id="heroName">RAMA</h2><p id="heroBio">The righteous prince of Ayodhya, master of the celestial bow.</p></div><button class="goldbtn" id="heroConfirm">SELECT WARRIOR →</button></div></div><div class="heroPreview" id="heroPreview"><img id="heroPortrait" class="heroPortrait" alt="" aria-hidden="true"><div class="previewText"><div class="eyebrow">CHAMPION PROFILE</div><h2 id="previewHeroName">RAMA</h2><p id="previewHeroDesc">THE RIGHTEOUS KING</p></div><div class="previewAura"></div><div class="previewContinue"><div class="frame" style="padding:12px 15px;margin-bottom:10px"><div class="eyebrow" style="font-size:9px">COMBAT STYLE</div><div id="heroStats" style="font-size:12px;color:#d8e4e9;margin-top:5px">Ranged • Balanced • Celestial Bow</div></div><button class="goldbtn" id="heroGoChapter" style="width:100%">CHOOSE A CHAPTER →</button></div></div></div>
+ <div class="heroLayout"><div class="rosterSide"><div class="eyebrow">CHAMPIONS OF THE RAMAKIEN</div><div class="heroCards" id="heroCards"></div><div class="heroExplain frame"><div><h2 id="heroName">RAMA</h2><p id="heroBio">The righteous prince of Ayodhya, master of the celestial bow.</p></div><button class="goldbtn" id="heroConfirm">SELECT WARRIOR →</button></div></div><div class="heroPreview" id="heroPreview" tabindex="0" role="group" aria-label="Interactive 3D champion preview. Drag horizontally to rotate the character."><div class="previewText"><div class="eyebrow">CHAMPION PROFILE</div><h2 id="previewHeroName">RAMA</h2><p id="previewHeroDesc">THE RIGHTEOUS KING</p></div><div class="previewAura"></div><div class="previewModelHint" aria-hidden="true"><span class="rotateGlyph">⟳</span><span>DRAG TO ROTATE</span><span class="modelHintSub">REAL-TIME 3D MODEL</span></div><div class="previewContinue"><div class="frame" style="padding:12px 15px;margin-bottom:10px"><div class="eyebrow" style="font-size:9px">COMBAT STYLE</div><div id="heroStats" style="font-size:12px;color:#d8e4e9;margin-top:5px">Ranged • Balanced • Celestial Bow</div></div><button class="goldbtn" id="heroGoChapter" style="width:100%">CHOOSE A CHAPTER →</button></div></div></div>
 </section>
 <section id="armory" class="screen" aria-label="Persistent upgrade armory">
  <div class="armoryWrap"><div class="screenHeading"><div><div class="eyebrow">HONOUR YOUR VICTORIES</div><h1 class="headTitle">THE ROYAL ARMORY</h1></div><button class="ghostbtn" data-home>← &nbsp; MAIN MENU</button></div><div class="armoryHead"><div><div class="eyebrow">PERMANENT BLESSINGS</div><p style="margin:6px 0 0;color:#bdcad4;font-size:12px">Spend the gems earned in battle to strengthen every future journey.</p></div><div class="resourcePill">✦ <span id="armoryGems">0</span> GEMS</div></div><div class="shopGrid" id="armoryCards"></div><div class="shopFoot frame"><span>UPGRADES APPLY TO EVERY CHAPTER AND STACK WITH LEVEL-UP BLESSINGS.</span><span id="armoryTotal">0 PURCHASES</span></div></div>
